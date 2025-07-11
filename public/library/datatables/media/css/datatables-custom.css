@@ -1,0 +1,34 @@
+/* Styling for pagination buttons */
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+  border-radius: 5px; /* Slightly rounded corners */
+  margin: 0 5px; /* Spacing between buttons */
+  border: 1px solid #444; /* Border color */
+  padding: 0;
+  text-align: center;
+  font-size: 14px; /* Font size */
+  font-weight: 400; /* Normal font weight */
+  color: #aaa; /* Light text color */
+  transition: all 0.3s ease; /* Smooth hover effect */
+}
+
+/* Hover effect for pagination buttons */
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+  background-color: #555; /* Slightly lighter background on hover */
+  color: #fff; /* White text on hover */
+  border-color: #666; /* Change border color on hover */
+}
+
+/* Active pagination button */
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+  background-color: #007bff; /* Blue background for active button */
+  color: #fff; /* White text for active button */
+  font-weight: bold; /* Bold text for active button */
+  border-color: #0056b3; /* Darker blue border for active button */
+}
+
+/* Pagination container */
+.dataTables_wrapper .dataTables_paginate {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-align: center; /* Center pagination buttons */
+}
