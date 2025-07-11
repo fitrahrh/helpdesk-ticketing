@@ -35,6 +35,14 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/users/{id}/edit', [App\Http\Controllers\Users\UserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{id}', [App\Http\Controllers\Users\UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{id}', [App\Http\Controllers\Users\UserController::class, 'destroy'])->name('users.destroy');
+
+    // Skpd management routes
+    Route::get('/skpd', [App\Http\Controllers\Skpds\SKPDController::class, 'index'])->name('skpd.index');
+    Route::get('/skpd/data', [App\Http\Controllers\Skpds\SKPDController::class, 'dataskpd'])->name('skpd.data');
+    Route::post('/skpd', [App\Http\Controllers\Skpds\SKPDController::class, 'store'])->name('skpd.store');
+    Route::get('/skpd/{id}/edit', [App\Http\Controllers\Skpds\SKPDController::class, 'edit'])->name('skpd.edit');
+    Route::put('/skpd/{id}', [App\Http\Controllers\Skpds\SKPDController::class, 'update'])->name('skpd.update');
+    Route::delete('/skpd/{id}', [App\Http\Controllers\Skpds\SKPDController::class, 'destroy'])->name('skpd.destroy');
 });
 
 
