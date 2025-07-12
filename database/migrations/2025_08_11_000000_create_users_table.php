@@ -18,14 +18,13 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->foreignId('role_id')->nullable()->constrained('roles');
-            $table->foreignId('skpd_id')->nullable()->constrained('skpds');
             $table->string('telegram_id')->nullable();
             $table->string('nip')->nullable();
             $table->string('no_hp')->nullable();
+            $table->foreignId('role_id')->nullable()->constrained('roles');
+            $table->foreignId('jabatan_id')->nullable()->constrained('jabatans');
             $table->rememberToken();
             $table->timestamps();
-            $table->softDeletes();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

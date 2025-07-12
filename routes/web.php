@@ -43,6 +43,26 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/skpd/{id}/edit', [App\Http\Controllers\Skpds\SKPDController::class, 'edit'])->name('skpd.edit');
     Route::put('/skpd/{id}', [App\Http\Controllers\Skpds\SKPDController::class, 'update'])->name('skpd.update');
     Route::delete('/skpd/{id}', [App\Http\Controllers\Skpds\SKPDController::class, 'destroy'])->name('skpd.destroy');
+
+    // Bidang management routes
+    Route::get('/bidang', [App\Http\Controllers\Bidangs\BidangController::class, 'index'])->name('bidang.index');
+    Route::get('/bidang/data', [App\Http\Controllers\Bidangs\BidangController::class, 'databidang'])->name('bidang.data');
+    Route::post('/bidang', [App\Http\Controllers\Bidangs\BidangController::class, 'store'])->name('bidang.store');
+    Route::get('/bidang/{id}/edit', [App\Http\Controllers\Bidangs\BidangController::class, 'edit'])->name('bidang.edit');
+    Route::put('/bidang/{id}', [App\Http\Controllers\Bidangs\BidangController::class, 'update'])->name('bidang.update');
+    Route::delete('/bidang/{id}', [App\Http\Controllers\Bidangs\BidangController::class, 'destroy'])->name('bidang.destroy');
+
+    // Jabatan management routes
+    Route::get('/jabatan', [App\Http\Controllers\Jabatans\JabatanController::class, 'index'])->name('jabatan.index');
+    Route::get('/jabatan/data', [App\Http\Controllers\Jabatans\JabatanController::class, 'datajabatan'])->name('jabatan.data');
+    Route::post('/jabatan', [App\Http\Controllers\Jabatans\JabatanController::class, 'store'])->name('jabatan.store');
+    Route::get('/jabatan/{id}/edit', [App\Http\Controllers\Jabatans\JabatanController::class, 'edit'])->name('jabatan.edit');
+    Route::put('/jabatan/{id}', [App\Http\Controllers\Jabatans\JabatanController::class, 'update'])->name('jabatan.update');
+    Route::delete('/jabatan/{id}', [App\Http\Controllers\Jabatans\JabatanController::class, 'destroy'])->name('jabatan.destroy');
+
+    Route::get('/get-bidang/{skpd_id}', [App\Http\Controllers\Users\UserController::class, 'getBidangBySkpd']);
+    Route::get('/get-jabatan/{bidang_id}', [App\Http\Controllers\Users\UserController::class, 'getJabatanByBidang']);
+    Route::get('/get-jabatan-info/{jabatan_id}', [App\Http\Controllers\Users\UserController::class, 'getJabatanInfo']);
 });
 
 

@@ -2,39 +2,38 @@
 
 @section('content')
 <section class="section">
-<div class="container-fluid">
-    <div class="section-header">
-        <h1>Kelola SKPD</h1>
-        <div class="section-header-breadcrumb">
-            <div class="breadcrumb-item active"><a href="{{ url('/home') }}">Dashboard</a></div>
-            <div class="breadcrumb-item">Kelola SKPD</div>
+    <div class="container-fluid">
+        <div class="section-header">
+            <h1>Kelola Jabatan</h1>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a href="{{ url('/home') }}">Dashboard</a></div>
+                <div class="breadcrumb-item">Kelola Jabatan</div>
+            </div>
         </div>
-    </div>
-    <div class="section-body">
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4>Daftar Satuan Kerja Perangkat Daerah (SKPD)</h4>
-                        <div class="card-header-action">
-                            <a href="#" class="btn btn-icon btn-primary" data-toggle="modal" data-target="#createSKPDModal" id="btn-add"><i class="fas fa-plus"></i> Tambah SKPD</a>
+        <div class="section-body">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Daftar Jabatan</h4>
+                            <div class="card-header-action">
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createJabatanModal"><i class="fas fa-plus"></i> Tambah Jabatan</button>
+                            </div>
                         </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-striped" id="skpd-table">
-                                <thead>
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Nama</th>
-                                        <th>Singkatan</th>
-                                        <th>Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Data will be filled by DataTables -->
-                                </tbody>
-                            </table>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped" id="jabatan-table">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Nama Jabatan</th>
+                                            <th>Bidang</th>
+                                            <th>SKPD</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -43,37 +42,36 @@
     </div>
 </section>
 
-@include('layouts.admin.skpd.create')
-@include('layouts.admin.skpd.edit')
+@include('layouts.admin.jabatan.create')
+@include('layouts.admin.jabatan.edit')
 
 @push('scripts')
 <script>
     $(function() {
-        let table = $('#skpd-table').DataTable({
+        let table = $('#jabatan-table').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ route('admin.skpd.data') }}",
+            ajax: "{{ route('admin.jabatan.data') }}",
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                 { data: 'name', name: 'name' },
-                { data: 'singkatan', name: 'singkatan' },
+                { data: 'bidang_name', name: 'bidang_name' },
+                { data: 'skpd_name', name: 'skpd_name' },
                 { data: 'action', name: 'action', orderable: false, searchable: false }
             ]
         });
 
-        // Save SKPD using button click instead of form submit
-        $('#saveBtn').on('click', function() {
-            let form = $('#createSKPDForm');
+        // Save Jabatan
+        $('#createJabatanForm').on('submit', function(e) {
+            e.preventDefault();
+            let form = $(this);
             $.ajax({
-                url: "{{ route('admin.skpd.store') }}",
+                url: "{{ route('admin.jabatan.store') }}",
                 method: "POST",
                 data: form.serialize(),
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
                 success: function(response) {
                     if (response.status) {
-                        $('#createSKPDModal').modal('hide');
+                        $('#createJabatanModal').modal('hide');
                         form[0].reset();
                         table.ajax.reload();
                         toastr.success(response.message);
@@ -94,17 +92,17 @@
             });
         });
 
-        // Edit SKPD
+        // Edit Jabatan
         $(document).on('click', '.btn-edit', function() {
             let id = $(this).data('id');
             $.ajax({
-                url: `/admin/skpd/${id}/edit`,
+                url: `/admin/jabatan/${id}/edit`,
                 method: "GET",
                 success: function(data) {
-                    $('#editSKPDModal').modal('show');
-                    $('#editSKPDForm #skpd_id').val(data.id);
-                    $('#editSKPDForm #edit_name').val(data.name);
-                    $('#editSKPDForm #edit_singkatan').val(data.singkatan);
+                    $('#editJabatanModal').modal('show');
+                    $('#editJabatanForm #jabatan_id').val(data.id);
+                    $('#editJabatanForm #edit_name').val(data.name);
+                    $('#editJabatanForm #edit_bidang_id').val(data.bidang_id);
                 },
                 error: function(xhr) {
                     toastr.error('Terjadi kesalahan saat mengambil data');
@@ -112,20 +110,20 @@
             });
         });
 
-        // Update SKPD
-        $('#editSKPDForm').on('submit', function(e) {
+        // Update Jabatan
+        $('#editJabatanForm').on('submit', function(e) {
             e.preventDefault();
             let form = $(this);
-            let id = $('#skpd_id').val();
+            let id = $('#jabatan_id').val();
             $.ajax({
-                url: `/admin/skpd/${id}`,
+                url: `/admin/jabatan/${id}`,
                 method: "PUT",
                 data: form.serialize(),
                 success: function(response) {
                     if (response.status) {
-                        $('#editSKPDModal').modal('hide');
+                        $('#editJabatanModal').modal('hide');
                         table.ajax.reload();
-                        toastr.success('sData berhasil disimpan');
+                        toastr.success(response.message);
                     } else {
                         toastr.error(response.message);
                     }
@@ -140,11 +138,11 @@
         });
     });
 
-    // Delete SKPD
-    window.deleteSKPD = function(id) {
+    // Delete Jabatan with SweetAlert
+    window.deleteJabatan = function(id) {
         Swal.fire({
             title: 'Apakah Anda yakin?',
-            text: "SKPD yang dihapus tidak dapat dikembalikan!",
+            text: "Jabatan yang dihapus tidak dapat dikembalikan!",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
@@ -154,14 +152,14 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: `/admin/skpd/${id}`,
+                    url: `/admin/jabatan/${id}`,
                     type: 'DELETE',
                     data: { "_token": "{{ csrf_token() }}" },
                     success: function(response) {
-                        $('#skpd-table').DataTable().ajax.reload();
+                        $('#jabatan-table').DataTable().ajax.reload();
                         Swal.fire(
                             'Terhapus!',
-                            'SKPD berhasil dihapus.',
+                            'Jabatan berhasil dihapus.',
                             'success'
                         );
                     },

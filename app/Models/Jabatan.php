@@ -6,21 +6,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-
-class SKPD extends Model
+class Jabatan extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'skpds';
-    
     protected $fillable = [
         'name',
-        'singkatan'
+        'bidang_id'
     ];
 
-    public function bidangs()
+    public function bidang()
     {
-        return $this->hasMany(Bidang::class);
+        return $this->belongsTo(Bidang::class);
     }
-
+    
 }
