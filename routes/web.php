@@ -4,13 +4,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ExampleController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
 Auth::routes();
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('/', [App\Http\Controllers\Ticket\UserTicketController::class, 'index'])->name('dashboard');
+
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
@@ -95,5 +94,29 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/selesai/data', [App\Http\Controllers\Ticket\TicketController::class, 'dataTicketSelesai'])->name('selesai.data');
 });
 
+// User Beranda & Ticket Management Routes
+Route::middleware(['auth'])->prefix('ticket')->name('ticket.')->group(function () {
 
+    // Ticket creation route
+    Route::get('/create', [App\Http\Controllers\Ticket\UserTicketController::class, 'create'])->name('create');
+    Route::post('/', [App\Http\Controllers\Ticket\UserTicketController::class, 'store'])->name('store');
+    
+    // Status routes - SPECIFIC ROUTES FIRST
+    Route::get('/pending', [App\Http\Controllers\Ticket\UserTicketController::class, 'indexPending'])->name('pending');
+    Route::get('/diproses', [App\Http\Controllers\Ticket\UserTicketController::class, 'indexDiproses'])->name('diproses');
+    Route::get('/disposisi', [App\Http\Controllers\Ticket\UserTicketController::class, 'indexDisposisi'])->name('disposisi');
+    Route::get('/selesai', [App\Http\Controllers\Ticket\UserTicketController::class, 'indexSelesai'])->name('selesai');
+    
+    // Data routes for AJAX
+    Route::get('/pending/data', [App\Http\Controllers\Ticket\UserTicketController::class, 'pendingData'])->name('pending.data');
+    Route::get('/diproses/data', [App\Http\Controllers\Ticket\UserTicketController::class, 'diprosesData'])->name('diproses.data');
+    Route::get('/disposisi/data', [App\Http\Controllers\Ticket\UserTicketController::class, 'disposisiData'])->name('disposisi.data');
+    Route::get('/selesai/data', [App\Http\Controllers\Ticket\UserTicketController::class, 'selesaiData'])->name('selesai.data');
+    
+    // WILDCARD ROUTE LAST
+    Route::get('/{id}', [App\Http\Controllers\Ticket\UserTicketController::class, 'show'])->name('ticket.show');
+    
+    // Comment route
+    Route::post('/{id}/comment', [App\Http\Controllers\Ticket\UserTicketController::class, 'addComment'])->name('ticket.comment');
+}); 
 

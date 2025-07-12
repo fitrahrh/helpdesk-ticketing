@@ -66,6 +66,14 @@ protected $fillable = [
     }
 
     /**
+     * Get the tickets associated with the user
+     */
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class);
+    }
+
+    /**
      * Check if user has a specific permission
      */
     public function hasPermission($permission)
