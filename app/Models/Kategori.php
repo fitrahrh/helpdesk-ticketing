@@ -17,7 +17,12 @@ class Kategori extends Model
 
     public function skpd()
     {
-        return $this->belongsTo(SKPD::class);
+        return $this->belongsTo(SKPD::class, 'skpd_id');
+    }
+
+    public function kategoris()
+    {
+        return $this->hasMany(Kategori::class);
     }
     
 }

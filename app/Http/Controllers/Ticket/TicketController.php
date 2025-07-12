@@ -43,7 +43,7 @@ class TicketController extends Controller
                 return $row->kategori && $row->kategori->skpd ? $row->kategori->skpd->name : '-';
             })
             ->addColumn('action', function($row) {
-                return '<a href="' . route('admin.ticket.show', $row->id) . '" class="btn btn-sm btn-info"><i class="fas fa-eye"></i> Detail</a>';
+                return '<a href="' . route('ticket.ticket.show', $row->id) . '" class="btn btn-sm btn-info"><i class="fas fa-eye"></i> Detail</a>';
             })
             ->rawColumns(['action'])
             ->make(true);

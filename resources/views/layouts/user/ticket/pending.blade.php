@@ -1,6 +1,6 @@
 @extends('layouts.user-layout')
 
-@section('banner-content')
+@section('content')
 <div class="container mt-n3 position-relative"><br>
     <!-- Main Content -->
     <div class="row justify-content-center">

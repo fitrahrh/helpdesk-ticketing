@@ -29,7 +29,6 @@
                                             <th>SKPD</th>
                                             <th>Judul</th>
                                             <th>Urgensi</th>
-                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -54,7 +53,13 @@
             ajax: "{{ route('admin.baru.data') }}",
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                { data: 'no_tiket', name: 'no_tiket' },
+                { 
+                    data: 'no_tiket', 
+                    name: 'no_tiket',
+                    render: function(data, type, row) {
+                        return '<a href="' + "{{ route('ticket.ticket.show', '') }}" + '/' + row.id + '" class="text-primary fw-bold"><span class="text-secondary">#</span>' + data + '</a>';
+                    }
+                },
                 { data: 'pelapor', name: 'pelapor' },
                 { data: 'kategori', name: 'kategori' },
                 { data: 'skpd', name: 'skpd' },
@@ -86,7 +91,6 @@
                         return '<span class="badge ' + badgeClass + '">' + data + '</span>';
                     }
                 },
-                { data: 'action', name: 'action', orderable: false, searchable: false }
             ]
         });
     });

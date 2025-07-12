@@ -23,4 +23,9 @@ class SKPD extends Model
         return $this->hasMany(Bidang::class);
     }
 
+    public function kategoris()
+    {
+        return $this->hasMany(Kategori::class, 'skpd_id');
+    }
+
 }

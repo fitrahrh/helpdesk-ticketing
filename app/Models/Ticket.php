@@ -102,17 +102,6 @@ class Ticket extends Model
     {
         return $this->hasMany(History::class);
     }
-
-    /**
-     * Generate a new ticket number
-     */
-    public static function generateTicketNumber()
-    {
-        $latestTicket = self::latest()->first();
-        $number = $latestTicket ? (int)substr($latestTicket->no_tiket, 4) + 1 : 1;
-        $year = date('Y');
-        return 'TKT-' . $year . sprintf('%06d', $number);
-    }
     
     /**
      * Get the feedback for this ticket

@@ -38,6 +38,10 @@
                 <a class="nav-link" href="{{ url('admin/penanggungjawab') }}"><i class="fas fa-user-plus"></i><span>Penanggungjawab</span></a>
             </li>
 
+            <li class="{{ Request::is('admin/history*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ url('admin/history') }}"><i class="fas fa-stopwatch"></i><span>Riwayat Tiket</span></a>
+            </li>
+
             <!-- Kelola Ticket -->
             <li class="menu-header">Ticket</li>
             <li class="{{ Request::is('admin/baru*') ? 'active' : '' }}">

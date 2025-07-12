@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('ticket_id')->constrained('ticket')->onDelete('cascade');
             $table->foreignUuid('user_id')->constrained('users');
             $table->text('pesan');
-            $table->json('attachments')->nullable();
+            $table->json('lampiran')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

@@ -20,7 +20,7 @@ class CommentController extends Controller
         $request->validate([
             'ticket_id' => 'required|exists:ticket,id',
             'pesan' => 'required|string',
-            'attachments.*' => 'nullable|file|max:5120' // 5MB limit per file
+            'lampiran.*' => 'nullable|file|max:5120' // 5MB limit per file
         ]);
         
         // Check if the user is authorized to comment on this ticket
@@ -33,11 +33,11 @@ class CommentController extends Controller
         }
         
         // Handle file uploads if any
-        $attachments = [];
-        if ($request->hasFile('attachments')) {
-            foreach ($request->file('attachments') as $file) {
-                $path = $file->store('comment-attachments', 'public');
-                $attachments[] = [
+        $lampiran = [];
+        if ($request->hasFile('lampiran')) {
+            foreach ($request->file('lampiran') as $file) {
+                $path = $file->store('comment-lampiran', 'public');
+                $lampiran[] = [
                     'name' => $file->getClientOriginalName(),
                     'type' => $file->getClientMimeType(),
                     'size' => $file->getSize(),
@@ -51,7 +51,7 @@ class CommentController extends Controller
             'ticket_id' => $request->ticket_id,
             'user_id' => Auth::id(),
             'pesan' => $request->pesan,
-            'attachments' => !empty($attachments) ? $attachments : null
+            'lampiran' => !empty($lampiran) ? $lampiran : null
         ]);
         
         // Update ticket's last comment info
@@ -91,25 +91,29 @@ class CommentController extends Controller
     }
     
     /**
-     * Mark comment as read by current user
+     * Mark comments as read by current user
      */
-    public function markAsRead($commentId)
+    public function markAsRead(Request $request)
     {
-        $comment = Comment::findOrFail($commentId);
+        $request->validate([
+            'comment_ids' => 'required|array',
+            'comment_ids.*' => 'exists:comments,id'
+        ]);
         
-        // Check if already read
-        $existingRead = CommentRead::where('comment_id', $commentId)
-                        ->where('user_id', Auth::id())
-                        ->first();
-        
-        if (!$existingRead) {
-            CommentRead::create([
-                'comment_id' => $commentId,
-                'user_id' => Auth::id(),
-                'read_at' => now()
-            ]);
+        foreach ($request->comment_ids as $commentId) {
+            $comment = Comment::find($commentId);
+            
+            // Check if already read
+            if (!$comment->readBy->contains(Auth::id())) {
+                // Add current user to readers
+                $comment->readBy()->attach(Auth::id(), ['read_at' => now()]);
+            }
         }
         
-        return response()->json(['status' => true]);
+        return response()->json([
+            'status' => true,
+            'message' => 'Comments marked as read'
+        ]);
     }
+
 }

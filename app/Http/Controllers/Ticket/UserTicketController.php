@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Ticket;
 use App\Models\Kategori;
 use App\Models\History;
+use App\Models\Skpd;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
@@ -18,30 +19,34 @@ class UserTicketController extends Controller
     /**
      * Display the user home with ticket statistics
      */
-    public function index()
-    {
-        $userId = Auth::id();
-        
-        // Get counts for each ticket status for the current user
-        $pendingCount = Ticket::where('user_id', $userId)->where('status', 'Baru')->count();
-        $diprosesCount = Ticket::where('user_id', $userId)->where('status', 'Diproses')->count();
-        $disposisiCount = Ticket::where('user_id', $userId)->where('status', 'Disposisi')->count();
-        $selesaiCount = Ticket::where('user_id', $userId)->where('status', 'Selesai')->count();
-        
-        // Get recent tickets for the current user
-        $recentTickets = Ticket::where('user_id', $userId)
-                        ->orderBy('created_at', 'desc')
-                        ->limit(5)
-                        ->get();
-        
-        return view('layouts.user.index', compact(
-            'pendingCount', 
-            'diprosesCount', 
-            'disposisiCount', 
-            'selesaiCount',
-            'recentTickets'
-        ));
-    }
+public function index()
+{
+    $userId = Auth::id();
+
+    // Fetch only SKPDs that have categories
+    $skpds = Skpd::whereHas('kategoris')->with('kategoris')->get();
+
+    // Get counts for each ticket status for the current user
+    $pendingCount = Ticket::where('user_id', $userId)->where('status', 'Baru')->count();
+    $diprosesCount = Ticket::where('user_id', $userId)->where('status', 'Diproses')->count();
+    $disposisiCount = Ticket::where('user_id', $userId)->where('status', 'Disposisi')->count();
+    $selesaiCount = Ticket::where('user_id', $userId)->where('status', 'Selesai')->count();
+
+    // Get recent tickets for the current user
+    $recentTickets = Ticket::where('user_id', $userId)
+        ->orderBy('created_at', 'desc')
+        ->limit(5)
+        ->get();
+
+    return view('layouts.user.index', compact(
+        'pendingCount',
+        'diprosesCount',
+        'disposisiCount',
+        'selesaiCount',
+        'recentTickets',
+        'skpds'
+    ));
+}
     
     /**
      * Display form to create a new ticket
@@ -61,12 +66,12 @@ class UserTicketController extends Controller
             'judul' => 'required|string|max:255',
             'kategori_id' => 'required|exists:kategoris,id',
             'urgensi' => 'required|in:Rendah,Sedang,Tinggi,Mendesak',
-            'deskripsi' => 'required|string',
+            'masalah' => 'required|string',
             'lampiran' => 'nullable|file|max:10240', // Max 10MB
         ]);
         
         // Generate ticket number
-        $ticketNumber = 'TKT-' . date('Ymd') . '-' . strtoupper(Str::random(5));
+        $ticketNumber = 'TIK-' . strtoupper(Str::random(6));
         
         // Handle file upload if present
         $lampiran = null;
@@ -78,7 +83,7 @@ class UserTicketController extends Controller
         $ticket = Ticket::create([
             'no_tiket' => $ticketNumber,
             'judul' => $request->judul,
-            'deskripsi' => $request->deskripsi,
+            'masalah' => $request->masalah,
             'kategori_id' => $request->kategori_id,
             'urgensi' => $request->urgensi,
             'status' => 'Baru',
@@ -97,7 +102,7 @@ class UserTicketController extends Controller
         ]);
         
         return redirect()
-            ->route('user.ticket.show', $ticket->id)
+            ->route('ticket.ticket.show', $ticket->id)
             ->with('success', 'Tiket berhasil dibuat.');
     }
     
@@ -118,7 +123,7 @@ class UserTicketController extends Controller
                     ->orderBy('created_at', 'asc')
                     ->get();
         
-        return view('user.detail.index', compact('ticket', 'histories'));
+        return view('layouts.user.ticket.detail.index', compact('ticket', 'histories'));
     }
     
     /**

@@ -10,6 +10,8 @@ Auth::routes();
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [App\Http\Controllers\Ticket\UserTicketController::class, 'index'])->name('dashboard');
 
+    Route::get('/admin', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
@@ -92,6 +94,10 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     // Selesai
     Route::get('/selesai', [App\Http\Controllers\Ticket\TicketController::class, 'indexSelesai'])->name('selesai');
     Route::get('/selesai/data', [App\Http\Controllers\Ticket\TicketController::class, 'dataTicketSelesai'])->name('selesai.data');
+    
+    // Ticket history
+    Route::get('/history', [App\Http\Controllers\History\HistoryController::class, 'index'])->name('history.index');
+    Route::get('/history/data', [App\Http\Controllers\History\HistoryController::class, 'data'])->name('history.data');
 });
 
 // User Beranda & Ticket Management Routes
@@ -106,6 +112,7 @@ Route::middleware(['auth'])->prefix('ticket')->name('ticket.')->group(function (
     Route::get('/diproses', [App\Http\Controllers\Ticket\UserTicketController::class, 'indexDiproses'])->name('diproses');
     Route::get('/disposisi', [App\Http\Controllers\Ticket\UserTicketController::class, 'indexDisposisi'])->name('disposisi');
     Route::get('/selesai', [App\Http\Controllers\Ticket\UserTicketController::class, 'indexSelesai'])->name('selesai');
+    Route::get('/proses/{id}', [App\Http\Controllers\Ticket\UserTicketController::class, 'show'])->name('ticket.show');
     
     // Data routes for AJAX
     Route::get('/pending/data', [App\Http\Controllers\Ticket\UserTicketController::class, 'pendingData'])->name('pending.data');
@@ -113,10 +120,11 @@ Route::middleware(['auth'])->prefix('ticket')->name('ticket.')->group(function (
     Route::get('/disposisi/data', [App\Http\Controllers\Ticket\UserTicketController::class, 'disposisiData'])->name('disposisi.data');
     Route::get('/selesai/data', [App\Http\Controllers\Ticket\UserTicketController::class, 'selesaiData'])->name('selesai.data');
     
-    // WILDCARD ROUTE LAST
-    Route::get('/{id}', [App\Http\Controllers\Ticket\UserTicketController::class, 'show'])->name('ticket.show');
-    
     // Comment route
-    Route::post('/{id}/comment', [App\Http\Controllers\Ticket\UserTicketController::class, 'addComment'])->name('ticket.comment');
+    Route::post('/comment', [App\Http\Controllers\Ticket\CommentController::class, 'store'])->name('comment.store');
+    Route::get('/comment/{ticketId}', [App\Http\Controllers\Ticket\CommentController::class, 'index'])->name('comment.index');
+    
+    // Mark comments as read
+    Route::post('/comment/mark-as-read', [App\Http\Controllers\Ticket\CommentController::class, 'markAsRead'])->name('comment.markAsRead');
 }); 
 
