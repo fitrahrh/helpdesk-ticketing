@@ -70,6 +70,29 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/kategori/{id}/edit', [App\Http\Controllers\KategoriController\KategoriController::class, 'edit'])->name('kategori.edit');
     Route::put('/kategori/{id}', [App\Http\Controllers\KategoriController\KategoriController::class, 'update'])->name('kategori.update');
     Route::delete('/kategori/{id}', [App\Http\Controllers\KategoriController\KategoriController::class, 'destroy'])->name('kategori.destroy');
+
+    Route::get('/penanggungjawab', [App\Http\Controllers\Penanggungjawabs\PenanggungjawabController::class, 'index'])->name('penanggungjawab.index');
+    Route::get('/penanggungjawab/data', [App\Http\Controllers\Penanggungjawabs\PenanggungjawabController::class, 'datapenanggungjawab'])->name('penanggungjawab.data');
+    Route::post('/penanggungjawab', [App\Http\Controllers\Penanggungjawabs\PenanggungjawabController::class, 'store'])->name('penanggungjawab.store');
+    Route::get('/penanggungjawab/{id}/edit', [App\Http\Controllers\Penanggungjawabs\PenanggungjawabController::class, 'edit'])->name('penanggungjawab.edit');
+    Route::put('/penanggungjawab/{id}', [App\Http\Controllers\Penanggungjawabs\PenanggungjawabController::class, 'update'])->name('penanggungjawab.update');
+    Route::delete('/penanggungjawab/{id}', [App\Http\Controllers\Penanggungjawabs\PenanggungjawabController::class, 'destroy'])->name('penanggungjawab.destroy');
+
+    Route::get('/baru', [App\Http\Controllers\Ticket\TicketController::class, 'indexBaru'])->name('baru');
+    Route::get('/baru/data', [App\Http\Controllers\Ticket\TicketController::class, 'dataTicketBaru'])->name('baru.data');
+    
+    // Diproses
+    Route::get('/diproses', [App\Http\Controllers\Ticket\TicketController::class, 'indexDiproses'])->name('diproses');
+    Route::get('/diproses/data', [App\Http\Controllers\Ticket\TicketController::class, 'dataTicketDiproses'])->name('diproses.data');
+    
+    // Disposisi
+    Route::get('/disposisi', [App\Http\Controllers\Ticket\TicketController::class, 'indexDisposisi'])->name('disposisi');
+    Route::get('/disposisi/data', [App\Http\Controllers\Ticket\TicketController::class, 'dataTicketDisposisi'])->name('disposisi.data');
+    Route::put('/disposisi/{id}', [App\Http\Controllers\Ticket\TicketController::class, 'updateDisposisi'])->name('disposisi.update');
+    
+    // Selesai
+    Route::get('/selesai', [App\Http\Controllers\Ticket\TicketController::class, 'indexSelesai'])->name('selesai');
+    Route::get('/selesai/data', [App\Http\Controllers\Ticket\TicketController::class, 'dataTicketSelesai'])->name('selesai.data');
 });
 
 
