@@ -63,6 +63,13 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/get-bidang/{skpd_id}', [App\Http\Controllers\Users\UserController::class, 'getBidangBySkpd']);
     Route::get('/get-jabatan/{bidang_id}', [App\Http\Controllers\Users\UserController::class, 'getJabatanByBidang']);
     Route::get('/get-jabatan-info/{jabatan_id}', [App\Http\Controllers\Users\UserController::class, 'getJabatanInfo']);
+
+    Route::get('/kategori', [App\Http\Controllers\KategoriController\KategoriController::class, 'index'])->name('kategori.index');
+    Route::get('/kategori/data', [App\Http\Controllers\KategoriController\KategoriController::class, 'datakategori'])->name('kategori.data');
+    Route::post('/kategori', [App\Http\Controllers\KategoriController\KategoriController::class, 'store'])->name('kategori.store');
+    Route::get('/kategori/{id}/edit', [App\Http\Controllers\KategoriController\KategoriController::class, 'edit'])->name('kategori.edit');
+    Route::put('/kategori/{id}', [App\Http\Controllers\KategoriController\KategoriController::class, 'update'])->name('kategori.update');
+    Route::delete('/kategori/{id}', [App\Http\Controllers\KategoriController\KategoriController::class, 'destroy'])->name('kategori.destroy');
 });
 
 

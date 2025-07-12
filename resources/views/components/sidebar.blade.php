@@ -11,7 +11,7 @@
             <li class="{{ Request::is('home') ? 'active' : '' }}">
                 <a class="nav-link" href="{{ url('home') }}"><i class="fas fa-fire"></i><span>Dashboard</span></a>
             </li>
-        <li class="dropdown {{ Request::is('admin/users*') || Request::is('admin/roles*') || Request::is('admin/skpd*') || Request::is('admin/bidang*') || Request::is('admin/jabatan*') ? 'active' : '' }}">
+        <li class="dropdown {{ Request::is('admin/users*') || Request::is('admin/roles*') || Request::is('admin/skpd*') || Request::is('admin/bidang*') || Request::is('admin/jabatan*') || Request::is('admin/kategori*') ? 'active' : '' }}">
             <a href="#" class="nav-link has-dropdown"><i class="fas fa-database"></i> <span>Data Master</span></a>
             <ul class="dropdown-menu">
                 <li class="{{ Request::is('admin/users*') ? 'active' : '' }}">
@@ -28,7 +28,10 @@
                 </li>
                 <li class="{{ Request::is('admin/jabatan*') ? 'active' : '' }}">
                     <a class="nav-link" href="{{ url('admin/jabatan') }}">Jabatan</a>
-                </li>            
+                </li>
+                <li class="{{ Request::is('admin/kategori*') ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ url('admin/kategori') }}">Kategori</a>
+                </li>               
             </ul>
         </li>
             <li class="{{ Request::is('home') ? 'active' : '' }}">
