@@ -10,7 +10,7 @@
         <div class="col-md-9">
             <div class="d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center">
-                    <h4 class="mb-0 me-3"><i class="fa fa-spinner text-dark me-2"></i> Tiket Diproses</h4>
+                    <h5><i class="fa fa-folder-open"></i> Tiket Proses</h5>
                 </div>
             </div>
             <hr>
@@ -26,7 +26,6 @@
                                     <th>Kategori</th>
                                     <th>Disetujui Oleh</th>
                                     <th>Tanggal Persetujuan</th>
-                                    <th>Urgensi</th>
                                 </tr>
                             </thead>
                         </table>
@@ -64,34 +63,7 @@
                 { data: 'judul', name: 'judul' },
                 { data: 'kategori', name: 'kategori' },
                 { data: 'disetujui_oleh', name: 'disetujui_oleh' },
-                { data: 'approved_at', name: 'approved_at' },
-                { 
-                    data: 'urgensi', 
-                    name: 'urgensi',
-                    render: function(data) {
-                        let badgeClass = 'bg-secondary';
-                        
-                        switch(data) {
-                            case 'Rendah':
-                                badgeClass = 'bg-info';
-                                break;
-                            case 'Sedang':
-                                badgeClass = 'bg-success';
-                                break;
-                            case 'Tinggi':
-                                badgeClass = 'bg-warning';
-                                break;
-                            case 'Mendesak':
-                                badgeClass = 'bg-danger';
-                                break;
-                            case 'Standby':
-                                badgeClass = 'bg-secondary';
-                                break;
-                        }
-                        
-                        return '<span class="badge ' + badgeClass + '">' + data + '</span>';
-                    }
-                }
+                { data: 'approved_at', name: 'approved_at' }
             ],
             language: {
                 processing: '<i class="fa fa-spinner fa-spin fa-2x fa-fw"></i><span class="sr-only">Loading...</span>',

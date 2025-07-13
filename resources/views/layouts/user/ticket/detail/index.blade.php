@@ -11,7 +11,7 @@
             <!-- My Tiket Status Card -->
                     <div class="d-flex align-items-center justify-content-between p-3">
                         <div class="d-flex align-items-center">
-                            <h5 class="mb-0"><i class="fa fa-ticket text-dark me-2"></i> My Tiket Status</h5>
+                            <h5 class="mb-0"><i class="fa fa-ticket text-dark me-2"></i> My Ticket Status</h5>
                         </div>
                     </div>
                     <htr>

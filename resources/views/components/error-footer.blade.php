@@ -1,3 +1,3 @@
 <div class="simple-footer mt-5">
-    Copyright &copy; Stisla 2018
+    &copy; 2025 Dinas Komunikasi, Informatika dan Statistik Provinsi Riau</a>
 </div>

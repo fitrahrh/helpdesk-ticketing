@@ -31,7 +31,6 @@
                                             <th>Disetujui Oleh</th>
                                             <th>Waktu Disetujui</th>
                                             <th>Urgensi</th>
-                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -89,8 +88,7 @@
                         
                         return '<span class="badge ' + badgeClass + '">' + data + '</span>';
                     }
-                },
-                { data: 'action', name: 'action', orderable: false, searchable: false }
+                }
             ]
         });
     });

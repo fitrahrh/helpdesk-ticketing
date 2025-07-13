@@ -10,7 +10,7 @@
         <div class="col-md-9">
             <div class="d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center">
-                    <h4 class="mb-0 me-3"><i class="fa fa-check text-dark me-2"></i> Tiket Selesai</h4>
+                    <h5><i class="fa fa-folder-open"></i> Tiket Selesai</h5>
                 </div>
             </div>
             <hr>

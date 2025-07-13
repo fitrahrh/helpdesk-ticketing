@@ -30,7 +30,6 @@
                                             <th>Judul</th>
                                             <th>Ditutup Oleh</th>
                                             <th>Waktu Penyelesaian</th>
-                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -61,8 +60,7 @@
                 { data: 'skpd', name: 'skpd' },
                 { data: 'judul', name: 'judul' },
                 { data: 'ditutup_oleh', name: 'ditutup_oleh' },
-                { data: 'waktu_penyelesaian', name: 'waktu_penyelesaian' },
-                { data: 'action', name: 'action', orderable: false, searchable: false }
+                { data: 'waktu_penyelesaian', name: 'waktu_penyelesaian' }
             ]
         });
     });

@@ -208,6 +208,9 @@
                     <li class="nav-item">
                         <a class="nav-link {{ request()->is('/pengetahuan') ? 'active' : '' }}" href="{{ url('/pengetahuan') }}">Pengetahuan Dasar</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('/admin') ? 'active' : '' }}" href="{{ url('/admin') }}">Dashboard</a>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle {{ request()->is('ticket*') ? 'active' : '' }}" href="#" id="ticketDropdown" role="button" data-toggle="dropdown">
                             Tiket
@@ -279,7 +282,7 @@
     @yield('content')
 
 <!-- Container for Additional Information -->
-<div class="container-fluid mt-5 mb-3" style="background-color: #f7f8fa; padding: 20px 0;">
+<div class="container-fluid mt-5 mb-3" style="background-color: #f7f8fa; padding: 40px 0;">
     <div class="container">
         <div class="row">
             <!-- Buku Panduan Section -->

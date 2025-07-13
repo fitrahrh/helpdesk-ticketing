@@ -3,7 +3,7 @@
 <div class="main-sidebar sidebar-style-2">
     <aside id="sidebar-wrapper">
         <div class="sidebar-brand">
-        <a href="">HELPDESK</a>
+        <a href="/">HELPDESK</a>
         </div>
 
         <ul class="sidebar-menu">
@@ -42,20 +42,36 @@
                 <a class="nav-link" href="{{ url('admin/history') }}"><i class="fas fa-stopwatch"></i><span>Riwayat Tiket</span></a>
             </li>
 
-            <!-- Kelola Ticket -->
-            <li class="menu-header">Ticket</li>
-            <li class="{{ Request::is('admin/baru*') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ url('admin/baru') }}"><i class="fas fa-envelope"></i><span>Baru</span></a>
-            </li>
-            <li class="{{ Request::is('admin/diproses*') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ url('admin/diproses') }}"><i class="fas fa-spinner"></i><span>Diproses</span></a>
-            </li>
-            <li class="{{ Request::is('admin/disposisi*') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ url('admin/disposisi') }}"><i class="fas fa-exchange-alt"></i><span>Disposisi</span></a>
-            </li>
-            <li class="{{ Request::is('admin/selesai*') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ url('admin/selesai') }}"><i class="fas fa-check"></i><span>Selesai</span></a>
-            </li>
+<!-- Kelola Ticket -->
+<li class="menu-header">Ticket</li>
+<li class="{{ Request::is('admin/baru*') ? 'active' : '' }}">
+    <a class="nav-link" href="{{ url('admin/baru') }}">
+        <i class="fas fa-envelope"></i>
+        <span>Baru</span>
+        <span class="ticket-circle badge-baru">{{ $ticketCounts['baru'] ?? 0 }}</span>
+    </a>
+</li>
+<li class="{{ Request::is('admin/diproses*') ? 'active' : '' }}">
+    <a class="nav-link" href="{{ url('admin/diproses') }}">
+        <i class="fas fa-spinner"></i>
+        <span>Diproses</span>
+        <span class="ticket-circle badge-diproses">{{ $ticketCounts['diproses'] ?? 0 }}</span>
+    </a>
+</li>
+<li class="{{ Request::is('admin/disposisi*') ? 'active' : '' }}">
+    <a class="nav-link" href="{{ url('admin/disposisi') }}">
+        <i class="fas fa-exchange-alt"></i>
+        <span>Disposisi</span>
+        <span class="ticket-circle badge-disposisi">{{ $ticketCounts['disposisi'] ?? 0 }}</span>
+    </a>
+</li>
+<li class="{{ Request::is('admin/selesai*') ? 'active' : '' }}">
+    <a class="nav-link" href="{{ url('admin/selesai') }}">
+        <i class="fas fa-check"></i>
+        <span>Selesai</span>
+        <span class="ticket-circle badge-selesai">{{ $ticketCounts['selesai'] ?? 0 }}</span>
+    </a>
+</li>
             
             <!-- Laporan -->
             <li class="menu-header">Laporan</li>

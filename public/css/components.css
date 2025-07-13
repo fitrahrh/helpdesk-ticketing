@@ -1181,9 +1181,6 @@ tr:first-child > td > .fc-day-grid-event {
   content: "\f44c";
   color: #000;
 }
-#toast-container > .toast-success:before {
-  content: "\f121";
-}
 
 .toast.toast-error {
   background-color: #fc544b;

@@ -84,7 +84,7 @@ class TicketController extends Controller
                 return $row->approved_at ? Carbon::parse($row->approved_at)->format('d M Y H:i') : '-';
             })
             ->addColumn('action', function($row) {
-                return '<a href="' . route('admin.ticket.show', $row->id) . '" class="btn btn-sm btn-info"><i class="fas fa-eye"></i> Detail</a>';
+                return '<a href="' . route('ticket.ticket.show', $row->id) . '" class="btn btn-sm btn-info"><i class="fas fa-eye"></i> Detail</a>';
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -131,8 +131,7 @@ class TicketController extends Controller
                 return $history && $history->user ? $history->user->first_name . ' ' . $history->user->last_name : '-';
             })
             ->addColumn('action', function($row) {
-                return '<button type="button" class="btn btn-sm btn-warning btn-disposisi" data-id="'.$row->id.'"><i class="fas fa-exchange-alt"></i> Disposisi</button> 
-                        <a href="' . route('admin.ticket.show', $row->id) . '" class="btn btn-sm btn-info"><i class="fas fa-eye"></i> Detail</a>';
+                return '<button type="button" class="btn btn-sm btn-warning btn-disposisi" data-id="'.$row->id.'">Disposisi</button>';
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -220,7 +219,7 @@ class TicketController extends Controller
                 return '-';
             })
             ->addColumn('action', function($row) {
-                return '<a href="' . route('admin.ticket.show', $row->id) . '" class="btn btn-sm btn-info"><i class="fas fa-eye"></i> Detail</a>';
+                return '<a href="' . route('ticket.ticket.show', $row->id) . '" class="btn btn-sm btn-info"><i class="fas fa-eye"></i> Detail</a>';
             })
             ->rawColumns(['action'])
             ->make(true);

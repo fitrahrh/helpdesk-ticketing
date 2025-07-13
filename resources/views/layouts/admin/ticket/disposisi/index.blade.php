@@ -28,8 +28,8 @@
                                             <th>Kategori</th>
                                             <th>SKPD</th>
                                             <th>Judul</th>
-                                            <th>Salah Disposisi Oleh</th>
                                             <th>Urgensi</th>
+                                            <th>Salah Disposisi Oleh</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
@@ -94,7 +94,6 @@
                 { data: 'kategori', name: 'kategori' },
                 { data: 'skpd', name: 'skpd' },
                 { data: 'judul', name: 'judul' },
-                { data: 'disposisi_oleh', name: 'disposisi_oleh' },
                 { 
                     data: 'urgensi', 
                     name: 'urgensi',
@@ -122,6 +121,7 @@
                         return '<span class="badge ' + badgeClass + '">' + data + '</span>';
                     }
                 },
+                { data: 'disposisi_oleh', name: 'disposisi_oleh' },
                 { data: 'action', name: 'action', orderable: false, searchable: false }
             ]
         });
