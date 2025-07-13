@@ -13,7 +13,7 @@
                                 <i class="fas fa-clock-o me-2 text-dark"></i> 
                                 <span class="{{ request()->routeIs('ticket.pending') || (isset($ticket) && request()->routeIs('ticket.show') && $ticket->status == 'Baru') ? 'fw-bold' : '' }}">Pending</span>
                             </div>
-                            <span class="badge {{ request()->routeIs('ticket.pending') || (isset($ticket) && request()->routeIs('ticket.show') && $ticket->status == 'Baru') ? 'bg-warning text-dark' : 'bg-light' }} rounded-pill">
+                            <span class="badge {{ request()->routeIs('ticket.pending') || (isset($ticket) && request()->routeIs('ticket.show') && $ticket->status == 'Baru') ? 'bg-light text-dark' : 'bg-light' }} rounded-pill">
                                 {{ Auth::user()->tickets()->where('status', 'Baru')->count() }}
                             </span>
                         </a>
@@ -23,7 +23,7 @@
                                 <i class="fas fa-exchange-alt me-2 text-dark"></i> 
                                 <span class="{{ request()->routeIs('ticket.disposisi') || (isset($ticket) && request()->routeIs('ticket.show') && $ticket->status == 'Disposisi') ? 'fw-bold' : '' }}">Disposisi</span>
                             </div>
-                            <span class="badge {{ request()->routeIs('ticket.disposisi') || (isset($ticket) && request()->routeIs('ticket.show') && $ticket->status == 'Disposisi') ? 'bg-danger' : 'bg-light' }} rounded-pill">
+                            <span class="badge {{ request()->routeIs('ticket.disposisi') || (isset($ticket) && request()->routeIs('ticket.show') && $ticket->status == 'Disposisi') ? 'bg-light' : 'bg-light' }} rounded-pill">
                                 {{ Auth::user()->tickets()->where('status', 'Disposisi')->count() }}
                             </span>
                         </a>
@@ -33,7 +33,7 @@
                                 <i class="fas fa-spinner me-2 text-dark"></i> 
                                 <span class="{{ request()->routeIs('ticket.diproses') || (isset($ticket) && request()->routeIs('ticket.show') && $ticket->status == 'Diproses') ? 'fw-bold' : '' }}">Proses</span>
                             </div>
-                            <span class="badge {{ request()->routeIs('ticket.diproses') || (isset($ticket) && request()->routeIs('ticket.show') && $ticket->status == 'Diproses') ? 'bg-info' : 'bg-light' }} rounded-pill">
+                            <span class="badge {{ request()->routeIs('ticket.diproses') || (isset($ticket) && request()->routeIs('ticket.show') && $ticket->status == 'Diproses') ? 'bg-light' : 'bg-light' }} rounded-pill">
                                 {{ Auth::user()->tickets()->where('status', 'Diproses')->count() }}
                             </span>
                         </a>
@@ -43,7 +43,7 @@
                                 <i class="fas fa-check me-2 text-dark"></i> 
                                 <span class="{{ request()->routeIs('ticket.selesai') || (isset($ticket) && request()->routeIs('ticket.show') && $ticket->status == 'Selesai') ? 'fw-bold' : '' }}">Selesai</span>
                             </div>
-                            <span class="badge {{ request()->routeIs('ticket.selesai') || (isset($ticket) && request()->routeIs('ticket.show') && $ticket->status == 'Selesai') ? 'bg-success' : 'bg-light  ' }} rounded-pill">
+                            <span class="badge {{ request()->routeIs('ticket.selesai') || (isset($ticket) && request()->routeIs('ticket.show') && $ticket->status == 'Selesai') ? 'bg-light' : 'bg-light  ' }} rounded-pill">
                                 {{ Auth::user()->tickets()->where('status', 'Selesai')->count() }}
                             </span>
                         </a>

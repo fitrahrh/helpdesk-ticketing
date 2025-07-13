@@ -166,7 +166,25 @@
                                 <div class="card-header bg-white py-2">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div class="d-flex align-items-center">
-                                            <span class="fw-bold">{{ $comment->user ? $comment->user->first_name.' '.$comment->user->last_name : 'Unknown User' }}</span>
+                                            <span class="fw-bold">
+                                                {{ $comment->user ? $comment->user->first_name.' '.$comment->user->last_name : 'Unknown User' }}
+                                                @php
+                                                    $roleName = $comment->user->id == $ticket->user_id ? 'Pelapor' : ($comment->user->role ? $comment->user->role->name : 'User');
+                                                    $badgeColor = 'secondary'; // default color
+                                                    
+                                                    // Set badge color based on role
+                                                    if ($roleName == 'Pelapor') {
+                                                        $badgeColor = 'light';
+                                                    } elseif ($roleName == 'Teknisi') {
+                                                        $badgeColor = 'warning';
+                                                    } elseif ($roleName == 'Admin') {
+                                                        $badgeColor = 'danger';
+                                                    }
+                                                @endphp
+                                                <span class="badge bg-{{ $badgeColor }} ms-2" style="font-size: 0.75rem; font-weight: 500;">
+                                                    {{ $roleName }}
+                                                </span>
+                                            </span>
                                         </div>
                                         <div class="d-flex align-items-center">
                                             <div class="text-muted small me-5">
@@ -242,7 +260,10 @@
                     @endforelse
                     
                     @if($ticket->status != 'Selesai')
-                    <div class="alert" style="background-color: #fadce0; color: #dc3545; border-color: #f5c6cb; padding: 12px 20px; border-radius: 4px;">
+                    <div class="alert alert-dismissible" style="background-color: #fadce0; color: #dc3545; border-color: #f5c6cb; padding: 12px 10px; border-radius: 4px;" id="ticketInfoAlert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                         <strong>Penting!</strong> Jika pengaduan anda selesai, mohon TUTUP TIKET.
                     </div>
                     
@@ -811,8 +832,6 @@ $(document).ready(function() {
         }, 250));
     });
     
-    // HAPUS bagian duplikat kode untuk modifikasi teks alert
-    $('.alert:contains("Jika pengaduan anda selesai")').text('Tiket ini masih dalam proses penanganan.');
 });
 </script>
 @endpush

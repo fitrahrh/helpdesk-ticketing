@@ -178,7 +178,6 @@
         .list-group-item.active {
             background-color: #f0f8ff !important; /* Very light blue */
             color: #2d3a4dff !important; /* Bootstrap primary color */
-            border-left: 4px solid #2d3a4dff !important;
             border-color: #2d3a4dff;
         }
         
