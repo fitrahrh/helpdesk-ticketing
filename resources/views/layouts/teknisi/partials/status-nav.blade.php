@@ -1,11 +1,4 @@
-<div class="shadow-sm mb-4">
-    <div class="card-body">        
-        <div class="d-flex align-items-center justify-content-between p-3">
-            <div class="d-flex align-items-center">
-                <h5 class="mb-0">Teknisi Status Tiket</h5>
-            </div>
-        </div>
-        
+<div class="mb-4">        
         <div class="list-group list-group-flush">
             <a href="{{ route('teknisi.baru') }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center {{ request()->routeIs('teknisi.baru') || (isset($ticket) && request()->routeIs('teknisi.ticket.show') && $ticket->status == 'Baru') ? 'active bg-light' : '' }}">
                 <div>
@@ -38,5 +31,4 @@
                 </span>
             </a>
         </div>
-    </div>
 </div>

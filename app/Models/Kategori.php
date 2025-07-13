@@ -20,9 +20,9 @@ class Kategori extends Model
         return $this->belongsTo(SKPD::class, 'skpd_id');
     }
 
-    public function kategoris()
+    public function tickets()
     {
-        return $this->hasMany(Kategori::class);
+        return $this->hasMany(Ticket::class, 'kategori_id');
     }
     
 }

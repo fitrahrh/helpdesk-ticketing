@@ -147,10 +147,12 @@ class TicketController extends Controller
         ]);
 
         $ticket = Ticket::findOrFail($id);
+        $oldKategori = $ticket->kategori ? $ticket->kategori->name : '-';
+        $newKategori = Kategori::find($request->kategori_id)->name;
         
         // Store old values for history
         $oldValues = [
-            'kategori_id' => $ticket->kategori_id,
+            'kategori' => $oldKategori,
             'status' => $ticket->status
         ];
         
@@ -163,13 +165,13 @@ class TicketController extends Controller
         History::create([
             'ticket_id' => $ticket->id,
             'user_id' => Auth::id(),
-            'status' => 'kategori_changed',
+            'status' => 'kategori changed', // Spasi daripada underscore
             'old_values' => $oldValues,
             'new_values' => [
-                'kategori_id' => $request->kategori_id,
+                'kategori' => $newKategori, // Nama kategori bukan ID
                 'status' => 'Baru'
             ],
-            'keterangan' => 'Tiket didisposisi ulang ke kategori baru'
+            'keterangan' => 'Tiket didisposisi ulang ke kategori '.$newKategori
         ]);
         
         return response()->json([

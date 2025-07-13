@@ -25,7 +25,7 @@
                                         <tr>
                                             <th>No</th>
                                             <th>No Tiket</th>
-                                            <th>Pelapor</th>
+                                            <th>Pengguna</th>
                                             <th>Status</th>
                                             <th>Nilai Lama</th>
                                             <th>Nilai Baru</th>
@@ -58,62 +58,98 @@
                 { data: 'no_tiket', name: 'no_tiket' },
                 { data: 'pelapor', name: 'pelapor' },
                 { 
-                    data: 'status', 
-                    name: 'status',
-                    render: function(data) {
-                        let badgeClass = 'badge-secondary';
-                        
-                        switch(data) {
-                            case 'status_changed':
-                                badgeClass = 'badge-info';
-                                break;
-                            case 'kategori_changed':
-                                badgeClass = 'badge-warning';
-                                break;
-                            case 'comment':
-                                badgeClass = 'badge-success';
-                                break;
-                        }
-                        
-                        return '<span class="badge ' + badgeClass + '">' + data + '</span>';
+                data: 'status', 
+                name: 'status',
+                render: function(data) {
+                    // Format status dengan spasi dan huruf kapital di awal
+                    let formattedStatus = data.replace(/_/g, ' ')
+                                            .replace(/\b\w/g, l => l.toUpperCase());
+                    
+                    let badgeClass = 'badge-secondary';
+                    
+                    switch(data) {
+                        case 'status_changed':
+                            badgeClass = 'badge-primary';
+                            formattedStatus = 'Status Diubah';
+                            break;
+                        case 'kategori_changed':
+                            badgeClass = 'badge-warning';
+                            formattedStatus = 'Kategori Diubah';
+                            break;
+                        case 'urgensi_changed':
+                            badgeClass = 'badge-danger';
+                            formattedStatus = 'Urgensi Diubah';
+                            break;
+                        case 'comment':
+                            badgeClass = 'badge-success';
+                            formattedStatus = 'Komentar';
+                            break;
                     }
-                },
-                { 
-                    data: 'old_values', 
-                    name: 'old_values',
-                    render: function(data) {
-                        if (!data) return '-';
-                        
-                        let html = '';
-                        try {
-                            const values = typeof data === 'object' ? data : JSON.parse(data);
-                            Object.entries(values).forEach(([key, value]) => {
-                                html += `<div><strong>${key}:</strong> ${value}</div>`;
-                            });
-                        } catch (e) {
-                            html = data;
-                        }
-                        return html || '-';
+                    
+                    return '<span class="badge ' + badgeClass + '">' + formattedStatus + '</span>';
+                }
+            },
+            { 
+                data: 'old_values', 
+                name: 'old_values',
+                render: function(data) {
+                    if (!data) return '-';
+                    
+                    let html = '';
+                    try {
+                        const values = typeof data === 'object' ? data : JSON.parse(data);
+                        Object.entries(values).forEach(([key, value]) => {
+                            // Format key untuk lebih manusiawi
+                            let formattedKey = key.replace(/_/g, ' ')
+                                                .replace(/\b\w/g, l => l.toUpperCase())
+                                                .replace('Id', '');
+                            
+                            html += `<div><strong>${formattedKey}:</strong> ${value}</div>`;
+                        });
+                    } catch (e) {
+                        html = data;
                     }
-                },
-                { 
-                    data: 'new_values', 
-                    name: 'new_values',
-                    render: function(data) {
-                        if (!data) return '-';
-                        
-                        let html = '';
-                        try {
-                            const values = typeof data === 'object' ? data : JSON.parse(data);
-                            Object.entries(values).forEach(([key, value]) => {
-                                html += `<div><strong>${key}:</strong> ${value}</div>`;
-                            });
-                        } catch (e) {
-                            html = data;
-                        }
-                        return html || '-';
+                    return html || '-';
+                }
+            },
+            { 
+                data: 'new_values', 
+                name: 'new_values',
+                render: function(data) {
+                    if (!data) return '-';
+                    
+                    let html = '';
+                    try {
+                        const values = typeof data === 'object' ? data : JSON.parse(data);
+                        Object.entries(values).forEach(([key, value]) => {
+                            // Format key untuk lebih manusiawi
+                            let formattedKey = key.replace(/_/g, ' ')
+                                            .replace(/\b\w/g, l => l.toUpperCase());
+                            
+                            // Menghilangkan suffix 'Id' jika ada
+                            formattedKey = formattedKey.replace(' Id', '');
+                            
+                            // Format nilai status dengan styling
+                            let formattedValue = value;
+                            if (key === 'status') {
+                                let statusClass = '';
+                                switch(value) {
+                                    case 'Baru': statusClass = 'text-warning'; break;
+                                    case 'Diproses': statusClass = 'text-info'; break;
+                                    case 'Disposisi': statusClass = 'text-danger'; break;
+                                    case 'Selesai': statusClass = 'text-success'; break;
+                                }
+                                formattedValue = `<span class="${statusClass} fw-bold">${value}</span>`;
+                            }
+                            
+                            html += `<div><strong>${formattedKey}:</strong> ${formattedValue}</div>`;
+                        });
+                    } catch (e) {
+                        html = data;
                     }
-                },
+                    return html || '-';
+                }
+            },
                 { data: 'keterangan', name: 'keterangan' },
                 { 
                     data: 'created_at', 

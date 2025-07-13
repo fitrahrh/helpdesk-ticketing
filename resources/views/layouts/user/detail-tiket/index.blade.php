@@ -25,7 +25,7 @@
                                 <i class="fa fa-clock-o me-2 text-dark"></i> 
                                 <span class="{{ $ticket->status == 'Baru' ? 'fw-bold' : '' }}">Pending</span>
                             </div>
-                            <span class="badge {{ $ticket->status == 'Baru' ? 'bg-warning text-dark' : 'bg-secondary' }} rounded-pill">
+                            <span class="badge {{ $ticket->status == 'Baru' ? 'bg-light text-dark' : 'bg-secondary' }} rounded-pill">
                                 {{ Auth::user()->tickets()->where('status', 'Baru')->count() }}
                             </span>
                         </a>
@@ -38,7 +38,7 @@
                                 <i class="fa fa-exchange-alt me-2 text-dark"></i> 
                                 <span class="{{ $ticket->status == 'Disposisi' ? 'fw-bold' : '' }}">Disposisi</span>
                             </div>
-                            <span class="badge {{ $ticket->status == 'Disposisi' ? 'bg-danger' : 'bg-secondary' }} rounded-pill">
+                            <span class="badge {{ $ticket->status == 'Disposisi' ? 'bg-light' : 'bg-secondary' }} rounded-pill">
                                 {{ Auth::user()->tickets()->where('status', 'Disposisi')->count() }}
                             </span>
                         </a>
@@ -51,7 +51,7 @@
                                 <i class="fa fa-spinner me-2 text-dark"></i> 
                                 <span class="{{ $ticket->status == 'Diproses' ? 'fw-bold' : '' }}">Proses</span>
                             </div>
-                            <span class="badge {{ $ticket->status == 'Diproses' ? 'bg-info' : 'bg-secondary' }} rounded-pill">
+                            <span class="badge {{ $ticket->status == 'Diproses' ? 'bg-light' : 'bg-secondary' }} rounded-pill">
                                 {{ Auth::user()->tickets()->where('status', 'Diproses')->count() }}
                             </span>
                         </a>
@@ -98,7 +98,7 @@
         <div class="col-md-9">
                 <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
                     <span class="fs-5">
-                        <h5><i class="fa fa-folder-open"></i> Tiket {{ $ticket->status }}</h5>
+                        <h5><i class="fa fa-folder-open"></i> Detail Tiket #{{ $ticket->no_tiket }}</h5>
                     </span>
                     <div>
                         <button type="button" class="btn btn-{{ $statusColor }} btn-sm" disabled>
@@ -136,7 +136,8 @@
                         </div>
                         <div>
                             <div class="fw-bold fs-5">{{ $ticket->user->first_name }} {{ $ticket->user->last_name }}</div>
-                            <div class="text-muted">{{ $ticket->kategori && $ticket->kategori->skpd ? $ticket->kategori->skpd->name : '-' }}</div>
+                            <div class="text-dark">{{ $ticket->kategori && $ticket->kategori->skpd ? $ticket->kategori->skpd->name : '-' }}</div>
+                            <div class="text-muted">{{ $ticket->created_at->format('d M Y H:i') }}</div>
                         </div>
                     </div>
                     <hr>

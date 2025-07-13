@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Ticket;
+use App\Models\Kategori;
+use App\Models\Comment;
+use App\Models\Feedback;
 
 class HomeController extends Controller
 {

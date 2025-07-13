@@ -101,8 +101,10 @@
                 success: function(data) {
                     $('#editPenanggungjawabModal').modal('show');
                     $('#editPenanggungjawabForm #penanggungjawab_id').val(data.id);
-                    $('#editPenanggungjawabForm #edit_user_id').val(data.user_id);
-                    $('#editPenanggungjawabForm #edit_kategori_id').val(data.kategori_id);
+                    
+                    // Set nilai dropdown dan trigger change event untuk memperbarui Select2
+                    $('#editPenanggungjawabForm #edit_user_id').val(data.user_id).trigger('change');
+                    $('#editPenanggungjawabForm #edit_kategori_id').val(data.kategori_id).trigger('change');
                 },
                 error: function(xhr) {
                     toastr.error('Terjadi kesalahan saat mengambil data');

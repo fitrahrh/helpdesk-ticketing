@@ -79,6 +79,10 @@ public function index()
             $lampiran = $request->file('lampiran')->store('lampiran/ticket', 'public');
         }
         
+        // Get kategori name for human-readable history
+        $kategori = Kategori::find($request->kategori_id);
+        $kategoriName = $kategori ? $kategori->name : 'Tidak diketahui';
+        
         // Create the ticket
         $ticket = Ticket::create([
             'no_tiket' => $ticketNumber,
@@ -91,14 +95,18 @@ public function index()
             'lampiran' => $lampiran,
         ]);
         
-        // Create history entry
+        // Create history entry with human-readable values
         History::create([
             'ticket_id' => $ticket->id,
             'user_id' => Auth::id(),
-            'status' => 'status_changed',
+            'status' => 'tiket dibuat', // Spasi daripada underscore
             'old_values' => null,
-            'new_values' => ['status' => 'Baru'],
-            'keterangan' => 'Tiket dibuat'
+            'new_values' => [
+                'status' => 'Baru',
+                'kategori' => $kategoriName, // Nama kategori, bukan ID
+                'urgensi' => $request->urgensi
+            ],
+            'keterangan' => 'Tiket baru dibuat'
         ]);
         
         return redirect()

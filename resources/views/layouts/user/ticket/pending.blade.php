@@ -6,6 +6,12 @@
     <!-- Main Content -->
     <div class="row justify-content-center">
         <div class="col-md-3">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <h5>My Ticket Status</h5>
+                </div>
+            </div>
+            <hr>
             @include('layouts.user.ticket.partials.status-nav')
         </div>
         <div class="col-md-9">

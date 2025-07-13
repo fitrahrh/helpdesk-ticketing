@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Penanggungjawab;
 use App\Models\User;
 use App\Models\Kategori;
+use App\Models\Skpd;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -13,9 +14,12 @@ class PenanggungjawabController extends Controller
 {
     public function index()
     {
-        $users = User::whereIn('role_id', [3])->get(); // Assume role_id 3 is for Teknisi
-        $kategoris = Kategori::all();
-        return view('layouts.admin.penanggungjawab.index', compact('users', 'kategoris'));
+        $penanggungjawabs = Penanggungjawab::with(['user', 'kategori'])->get();
+        $users = User::where('role_id', 3)->get(); // Role_id 3 untuk teknisi
+        $skpds = SKPD::with('kategoris')->get(); // Dapatkan SKPD dengan relasi kategoris
+        $kategoris = Kategori::with('skpd')->get(); // Tetap ambil semua kategori untuk kebutuhan lain
+        
+        return view('layouts.admin.penanggungjawab.index', compact('penanggungjawabs', 'users', 'skpds', 'kategoris'));
     }
 
     public function datapenanggungjawab(Request $request)
