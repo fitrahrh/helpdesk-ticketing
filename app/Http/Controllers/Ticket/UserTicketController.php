@@ -290,22 +290,13 @@ public function index()
                 return $row->closedBy ? $row->closedBy->first_name . ' ' . $row->closedBy->last_name : '-';
             })
             ->addColumn('closed_at', function($row) {
-                $history = History::where('ticket_id', $row->id)
-                            ->where('status', 'status_changed')
-                            ->whereJsonContains('new_values->status', 'Selesai')
-                            ->first();
-                            
-                return $history ? $history->created_at->format('d M Y H:i') : '-';
+                // Format the closed_at date properly
+                return $row->closed_at ? $row->closed_at->format('d M Y H:i') : '-';
             })
             ->addColumn('waktu_penyelesaian', function($row) {
-                $history = History::where('ticket_id', $row->id)
-                            ->where('status', 'status_changed')
-                            ->whereJsonContains('new_values->status', 'Selesai')
-                            ->first();
-                            
-                if ($history) {
-                    $endDate = $history->created_at;
+                if ($row->created_at && $row->closed_at) {
                     $startDate = $row->created_at;
+                    $endDate = $row->closed_at;
                     $diff = $startDate->diff($endDate);
                     
                     $format = [];

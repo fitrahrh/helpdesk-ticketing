@@ -10,11 +10,11 @@
         <div class="col-md-9">
             <div class="d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center">
-                    <h4 class="mb-0 me-3"><i class="fa fa-exchange text-danger text-primary me-2"></i> Tiket Disposisi</h4>
+                    <h4 class="mb-0 me-3"><i class="fa fa-exchange-alt text-dark me-2"></i> Tiket Disposisi</h4>
                 </div>
             </div>
             <hr>    
-            <div class="card shadow-lg border-0 rounded-lg fade-in">
+            <div class="card border-0 rounded-lg fade-in">
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover" id="disposisi-tickets-table">
@@ -26,12 +26,8 @@
                                     <th>Kategori</th>
                                     <th>Tanggal Disposisi</th>
                                     <th>Urgensi</th>
-                                    <th>Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <!-- Data will be filled by DataTables -->
-                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -39,18 +35,31 @@
         </div>
     </div>
 </div>
-@endsection
 
-@section('scripts')
+@push('scripts')
 <script>
-    $(function() {
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof $ !== 'undefined') {
+            initDataTable();
+        } else {
+            console.error('jQuery is not loaded!');
+        }
+    });
+
+    function initDataTable() {
         let table = $('#disposisi-tickets-table').DataTable({
             processing: true,
             serverSide: true,
             ajax: "{{ route('ticket.disposisi.data') }}",
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                { data: 'no_tiket', name: 'no_tiket' },
+                { 
+                    data: 'no_tiket', 
+                    name: 'no_tiket',
+                    render: function(data, type, row) {
+                        return '<a href="' + "{{ route('ticket.ticket.show', '') }}" + '/' + row.id + '" class="text-primary fw-bold"><span class="text-secondary">#</span>' + data + '</a>';
+                    }
+                },
                 { data: 'judul', name: 'judul' },
                 { data: 'kategori', name: 'kategori' },
                 { data: 'updated_at', name: 'updated_at' },
@@ -80,15 +89,6 @@
                         
                         return '<span class="badge ' + badgeClass + '">' + data + '</span>';
                     }
-                },
-                { 
-                    data: 'action', 
-                    name: 'action', 
-                    orderable: false, 
-                    searchable: false,
-                    render: function(data, type, row) {
-                        return '<a href="/user/ticket/' + row.id + '" class="btn btn-sm btn-primary"><i class="fa fa-eye"></i> Detail</a>';
-                    }
                 }
             ],
             language: {
@@ -97,9 +97,17 @@
                 info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
                 infoEmpty: "Menampilkan 0 sampai 0 dari 0 data",
                 infoFiltered: "(disaring dari _MAX_ total data)",
-                lengthMenu: "Tampilkan _MENU_ data per halaman"
+                lengthMenu: "Tampilkan _MENU_ data per halaman",
+                search: "Cari:",
+                paginate: {
+                    first: "Pertama",
+                    last: "Terakhir",
+                    next: "Selanjutnya",
+                    previous: "Sebelumnya"
+                }
             }
         });
-    });
+    }
 </script>
+@endpush
 @endsection

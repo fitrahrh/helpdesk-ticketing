@@ -11,11 +11,11 @@
         <div class="col-md-9">
             <div class="d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center">
-                    <h4 class="mb-0 me-3"><i class="fa fa-clock-o text-warning text-primary me-2"></i> Belum Proses</h4>
+                    <h4 class="mb-0 me-3"><i class="fa fa-clock-o text-dark me-2"></i> Belum Proses</h4>
                 </div>
             </div>
             <hr>
-            <div class="card shadow-lg border-0 rounded-lg fade-in">
+            <div class="card border-0 rounded-lg fade-in">
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover" id="pending-tickets-table">
@@ -27,7 +27,6 @@
                                     <th>Kategori</th>
                                     <th>Tanggal</th>
                                     <th>Urgensi</th>
-                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                         </table>
@@ -37,9 +36,7 @@
         </div>
     </div>
 </div>
-@endsection
-
-@section('scripts')
+@push('scripts')
 <script>
     $(function() {
         let table = $('#pending-tickets-table').DataTable({
@@ -48,7 +45,13 @@
             ajax: "{{ route('ticket.pending.data') }}",
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                { data: 'no_tiket', name: 'no_tiket' },
+                { 
+                    data: 'no_tiket', 
+                    name: 'no_tiket',
+                    render: function(data, type, row) {
+                        return '<a href="' + "{{ route('ticket.ticket.show', '') }}" + '/' + row.id + '" class="text-primary fw-bold"><span class="text-secondary">#</span>' + data + '</a>';
+                    }
+                },
                 { data: 'judul', name: 'judul' },
                 { data: 'kategori', name: 'kategori' },
                 { data: 'created_at', name: 'created_at' },
@@ -78,15 +81,6 @@
                         
                         return '<span class="badge ' + badgeClass + '">' + data + '</span>';
                     }
-                },
-                { 
-                    data: 'action', 
-                    name: 'action', 
-                    orderable: false, 
-                    searchable: false,
-                    render: function(data, type, row) {
-                        return '<a href="/user/ticket/' + row.id + '" class="btn btn-sm btn-primary"><i class="fa fa-eye"></i> Detail</a>';
-                    }
                 }
             ],
             language: {
@@ -107,4 +101,5 @@
         });
     });
 </script>
+@endpush
 @endsection
