@@ -120,11 +120,14 @@ Route::middleware(['auth'])->prefix('ticket')->name('ticket.')->group(function (
     Route::get('/disposisi/data', [App\Http\Controllers\Ticket\UserTicketController::class, 'disposisiData'])->name('disposisi.data');
     Route::get('/selesai/data', [App\Http\Controllers\Ticket\UserTicketController::class, 'selesaiData'])->name('selesai.data');
     
+    // Feedback route
+    Route::post('/feedback/store', [App\Http\Controllers\Feedback\FeedbackController::class, 'store'])->name('feedback.store');
+    
     // Comment route
-    Route::post('/comment', [App\Http\Controllers\Ticket\CommentController::class, 'store'])->name('comment.store');
-    Route::get('/comment/{ticketId}', [App\Http\Controllers\Ticket\CommentController::class, 'index'])->name('comment.index');
+    Route::post('/comment/store', [App\Http\Controllers\Comments\CommentController::class, 'store'])->name('ticket.comment.store');
+    Route::get('/comment/{ticketId}', [App\Http\Controllers\Comments\CommentController::class, 'index'])->name('comment.index');
     
     // Mark comments as read
-    Route::post('/comment/mark-as-read', [App\Http\Controllers\Ticket\CommentController::class, 'markAsRead'])->name('comment.markAsRead');
+    Route::post('/comment/mark-as-read', [App\Http\Controllers\Comments\CommentController::class, 'markAsRead'])->name('comment.markAsRead');
 }); 
 

@@ -12,6 +12,7 @@
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/components.css') }}">
@@ -23,7 +24,14 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote-lite.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/default-style.css') }}">
+    
     <style>
+        p {
+        margin:0;
+        padding:0;
+        -webKit-margin-start: 0;
+        -webKit-padding-start: 0;
+        }
         body {
             background: #fff;
             overflow-x: hidden;
@@ -166,6 +174,18 @@
             50% {
                 transform: scale(1.2); /* Membesar */
             }
+        }
+        .list-group-item.active {
+            background-color: #f0f8ff !important; /* Very light blue */
+            color: #2d3a4dff !important; /* Bootstrap primary color */
+            border-left: 4px solid #2d3a4dff !important;
+            border-color: #2d3a4dff;
+        }
+        
+        .list-group-item.active i, 
+        .list-group-item.active span {
+            color: #2d3a4dff !important;
+            font-weight: bold;
         }
     </style>
     @stack('css')
@@ -343,7 +363,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <!-- Summernote JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote-lite.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>

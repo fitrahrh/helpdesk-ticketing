@@ -718,7 +718,7 @@ select.form-control:not([size]):not([multiple]) {
   pointer-events: none;
 }
 
-@import url("//fonts.googleapis.com/css?family=Nunito:400,600,700,800");
+@import url("https://fonts.googleapis.com/css?family=Nunito:400,600,700,800");
 .btn:focus,
 .btn:active,
 .btn:active:focus,

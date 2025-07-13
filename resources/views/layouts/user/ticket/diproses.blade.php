@@ -1,7 +1,8 @@
 @extends('layouts.user-layout')
 
 @section('content')
-<div class="container mt-n3 position-relative"><br>
+<div class="pt-5"></div>
+<div class="container position-relative">
     <div class="row justify-content-center">
         <div class="col-md-3">
             @include('layouts.user.ticket.partials.status-nav')

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Comment;
+namespace App\Http\Controllers\Comments;
 
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
@@ -59,8 +59,8 @@ class CommentController extends Controller
         $ticket->last_comment_at = now();
         $ticket->save();
         
-        // Mark as read by the comment author
-        $this->markAsRead($comment->id);
+        // Mark as read by the comment author - FIXED: Use the new helper method
+        $this->markSingleCommentAsRead($comment->id);
         
         return response()->json([
             'status' => true,
@@ -68,6 +68,38 @@ class CommentController extends Controller
         ]);
     }
     
+    /**
+     * Private helper method to mark a single comment as read
+     */
+    private function markSingleCommentAsRead($commentId)
+    {
+        $comment = Comment::find($commentId);
+        if ($comment && !$comment->readBy()->where('user_id', Auth::id())->exists()) {
+            $comment->readBy()->attach(Auth::id(), ['read_at' => now()]);
+        }
+    }
+
+
+    /**
+     * Mark comments as read by current user (public route method)
+     */
+    public function markAsRead(Request $request)
+    {
+        $request->validate([
+            'comment_ids' => 'required|array',
+            'comment_ids.*' => 'exists:comments,id'
+        ]);
+        
+        foreach ($request->comment_ids as $commentId) {
+            $this->markSingleCommentAsRead($commentId);
+        }
+        
+        return response()->json([
+            'status' => true,
+            'message' => 'Comments marked as read'
+        ]);
+    }
+
     /**
      * Get readers for a comment
      */
@@ -89,31 +121,4 @@ class CommentController extends Controller
             'readers' => $comment->readBy
         ]);
     }
-    
-    /**
-     * Mark comments as read by current user
-     */
-    public function markAsRead(Request $request)
-    {
-        $request->validate([
-            'comment_ids' => 'required|array',
-            'comment_ids.*' => 'exists:comments,id'
-        ]);
-        
-        foreach ($request->comment_ids as $commentId) {
-            $comment = Comment::find($commentId);
-            
-            // Check if already read
-            if (!$comment->readBy->contains(Auth::id())) {
-                // Add current user to readers
-                $comment->readBy()->attach(Auth::id(), ['read_at' => now()]);
-            }
-        }
-        
-        return response()->json([
-            'status' => true,
-            'message' => 'Comments marked as read'
-        ]);
-    }
-
 }

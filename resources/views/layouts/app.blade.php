@@ -33,7 +33,6 @@
     <link rel="stylesheet" href="{{ asset('library/datatables/media/css/datatables-custom.css') }}">
     <link rel="stylesheet" href="{{ asset('library/datatables/media/css/jquery.dataTables.min.css') }}">
 
-
     <!-- Additional CSS (if any) -->
     @stack('css')
 </head>

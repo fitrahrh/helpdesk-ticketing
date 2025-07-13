@@ -1,22 +1,77 @@
-
 @extends('layouts.user-layout')
 
 @section('content')
 <br><br><br><br>
-<div class="container mt-n3 position-relative"><br>
+<div class="container mt-n3 position-relative">
     <div class="row justify-content-center">
         <!-- Sidebar Navigation -->
         <div class="col-md-3">
+            <div class="shadow-sm mb-4">
+                <div class="card-body">
             <!-- My Tiket Status Card -->
-            <div class="card border-1 shadow-sm mb-4">
-                <div class="card-body">
-                    @include('layouts.user.ticket.partials.status-nav')
-                </div>
+                    <div class="d-flex align-items-center justify-content-between p-3">
+                        <div class="d-flex align-items-center">
+                            <h5 class="mb-0"><i class="fa fa-ticket text-dark me-2"></i> My Tiket Status</h5>
+                        </div>
+                    </div>
+                    <htr>
+                    
+                    <div class="list-group list-group-flush">
+                        <!-- Pending Status -->
+                        <a href="{{ route('ticket.pending') }}" 
+                        class="list-group-item list-group-item-action d-flex justify-content-between align-items-center 
+                                {{ $ticket->status == 'Baru' ? 'active bg-light' : '' }}">
+                            <div>
+                                <i class="fa fa-clock-o me-2 text-dark"></i> 
+                                <span class="{{ $ticket->status == 'Baru' ? 'fw-bold' : '' }}">Pending</span>
+                            </div>
+                            <span class="badge {{ $ticket->status == 'Baru' ? 'bg-warning text-dark' : 'bg-secondary' }} rounded-pill">
+                                {{ Auth::user()->tickets()->where('status', 'Baru')->count() }}
+                            </span>
+                        </a>
+                        
+                        <!-- Disposisi Status -->
+                        <a href="{{ route('ticket.disposisi') }}" 
+                        class="list-group-item list-group-item-action d-flex justify-content-between align-items-center 
+                                {{ $ticket->status == 'Disposisi' ? 'active bg-light' : '' }}">
+                            <div>
+                                <i class="fa fa-exchange-alt me-2 text-dark"></i> 
+                                <span class="{{ $ticket->status == 'Disposisi' ? 'fw-bold' : '' }}">Disposisi</span>
+                            </div>
+                            <span class="badge {{ $ticket->status == 'Disposisi' ? 'bg-danger' : 'bg-secondary' }} rounded-pill">
+                                {{ Auth::user()->tickets()->where('status', 'Disposisi')->count() }}
+                            </span>
+                        </a>
+                        
+                        <!-- Diproses Status -->
+                        <a href="{{ route('ticket.diproses') }}" 
+                        class="list-group-item list-group-item-action d-flex justify-content-between align-items-center 
+                                {{ $ticket->status == 'Diproses' ? 'active bg-light' : '' }}">
+                            <div>
+                                <i class="fa fa-spinner me-2 text-dark"></i> 
+                                <span class="{{ $ticket->status == 'Diproses' ? 'fw-bold' : '' }}">Proses</span>
+                            </div>
+                            <span class="badge {{ $ticket->status == 'Diproses' ? 'bg-info' : 'bg-secondary' }} rounded-pill">
+                                {{ Auth::user()->tickets()->where('status', 'Diproses')->count() }}
+                            </span>
+                        </a>
+                        
+                        <!-- Selesai Status -->
+                        <a href="{{ route('ticket.selesai') }}" 
+                        class="list-group-item list-group-item-action d-flex justify-content-between align-items-center 
+                                {{ $ticket->status == 'Selesai' ? 'active bg-light' : '' }}">
+                            <div>
+                                <i class="fa fa-check me-2 text-dark"></i> 
+                                <span class="{{ $ticket->status == 'Selesai' ? 'fw-bold' : '' }}">Selesai</span>
+                            </div>
+                            <span class="badge {{ $ticket->status == 'Selesai' ? 'bg-success' : 'bg-secondary' }} rounded-pill">
+                                {{ Auth::user()->tickets()->where('status', 'Selesai')->count() }}
+                            </span>
+                        </a>
+                    </div>
             </div>
-
+        </div>
             <!-- Ticket Status Card -->
-            <div class="card border-1 shadow-sm rounded-lg mb-4">
-                <div class="card-body">
                     @php
                         $statusIcon = 'clock-o';
                         $statusColor = 'warning';
@@ -36,67 +91,33 @@
                             $statusText = 'Selesai';
                         }
                     @endphp
-                    
-                    <div class="text-center mb-3">
-                        <div class="icon-circle bg-{{ $statusColor }} text-white mb-2">
-                            <i class="fa fa-{{ $statusIcon }} fa-2x"></i>
-                        </div>
-                        <h5 class="mb-0">Status: {{ $statusText }}</h5>
-                    </div>
-                    
-                    <hr>
-                    
-                    <div class="ticket-info small">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted">ID Tiket:</span>
-                            <span class="fw-bold">{{ $ticket->no_tiket }}</span>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted">Dibuat:</span>
-                            <span>{{ $ticket->created_at->format('d M Y H:i') }}</span>
-                        </div>
-                        @if($ticket->status == 'Diproses')
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted">Disetujui:</span>
-                            <span>{{ $ticket->approved_at ? $ticket->approved_at->format('d M Y H:i') : '-' }}</span>
-                        </div>
-                        @endif
-                        @if($ticket->status == 'Selesai')
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted">Diselesaikan:</span>
-                            <span>{{ $ticket->closed_at ? $ticket->closed_at->format('d M Y H:i') : '-' }}</span>
-                        </div>
-                        @endif
-                    </div>
-                </div>
-            </div>
             
-            <!-- Support Section -->
-            <div class="card border-1 shadow-sm rounded-lg mb-4">
-                <div class="card-body">
-                    <h6 class="fw-bold">Butuh Bantuan?</h6>
-                    <p class="small text-muted">Jika Anda memiliki pertanyaan atau membutuhkan informasi tambahan, hubungi:</p>
-                    <div class="d-flex align-items-center mb-2">
-                        <i class="fa fa-envelope text-primary me-2"></i>
-                        <span>support@helpdesk.riau.go.id</span>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <i class="fa fa-phone text-primary me-2"></i>
-                        <span>(0761)-45505</span>
-                    </div>
-                </div>
-            </div>
         </div>
         
         <!-- Main Content -->
         <div class="col-md-9">
-            <div class="card shadow-sm mb-4">
                 <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
                     <span class="fs-5">
-                        <i class="fa fa-folder-open"></i> Tiket {{ $ticket->status }}
+                        <h5><i class="fa fa-folder-open"></i> Tiket {{ $ticket->status }}</h5>
                     </span>
                     <div>
-                        <span class="badge bg-{{ $statusColor }} p-2">Status: {{ $ticket->status }}</span>
+                        <button type="button" class="btn btn-{{ $statusColor }} btn-sm" disabled>
+                            <i class="fa fa-circle-info me-1"></i> Status: {{ $ticket->status }}
+                        </button>
+                        
+                        @if($ticket->status == 'Selesai' && !$ticket->feedback)
+                            <button type="button" class="btn btn-warning btn-sm ms-2" data-toggle="modal" data-target="#feedbackModal">
+                                <i class="fa fa-star me-1"></i> Berikan Feedback
+                            </button>
+                        @elseif($ticket->status == 'Selesai')
+                            <!-- Show rating instead of button -->
+                            <div class="btn btn-outline-success btn-sm ms-2">
+                                Rating: 
+                                @for($i = 1; $i <= 5; $i++)
+                                    <i class="fa fa-{{ $i <= $ticket->feedback->rating ? 'star' : 'star-o' }} {{ $i <= $ticket->feedback->rating ? 'text-warning' : '' }}"></i>
+                                @endfor
+                            </div>
+                        @endif
                         
                         @if($ticket->status != 'Selesai')
                             <a href="" class="btn btn-danger btn-sm ms-2 close-ticket-btn">
@@ -187,7 +208,7 @@
                                             <span class="fw-bold">{{ $comment->user ? $comment->user->first_name.' '.$comment->user->last_name : 'Unknown User' }}</span>
                                         </div>
                                         <div class="d-flex align-items-center">
-                                            <div class="text-muted small me-2">
+                                            <div class="text-muted small me-5">
                                                 @if($comment->created_at)
                                                     @php
                                                         $commentDate = \Carbon\Carbon::parse($comment->created_at);
@@ -204,12 +225,23 @@
                                                 @endif
                                             </div>
                                             
-                                            <!-- Add eye icon here -->
-                                            @if($comment->readBy->contains(Auth::id()))
-                                                <i class="fas fa-eye text-muted" title="Tandai belum dibaca" data-id="{{ $comment->id }}" onclick="markAsUnread(this, {{ $comment->id }})"></i>
-                                            @else
-                                                <i class="fas fa-eye text-primary" title="Tandai sudah dibaca" data-id="{{ $comment->id }}" onclick="markAsRead(this, {{ $comment->id }})"></i>
-                                            @endif
+                                            <!-- Add eye icon here with fixed tooltip -->
+                                            <div class="comment-readers">
+                                                <i class="fas fa-eye {{ $comment->readBy->count() > 0 ? 'text-secondary' : 'text-muted' }}" 
+                                                   data-id="{{ $comment->id }}" 
+                                                   data-bs-toggle="tooltip" 
+                                                   data-bs-html="true"
+                                                   title="<strong>Dibaca oleh:</strong>
+                                                          @if($comment->readBy->count() > 0)
+                                                              @foreach($comment->readBy as $reader)
+                                                                  {{ $reader->first_name }} {{ $reader->last_name }}{{ !$loop->last ? '<br>' : '' }}
+                                                              @endforeach
+                                                          @else
+                                                              Belum ada yang membaca
+                                                          @endif">
+                                                </i>
+                                                <span class="readers-count small">{{ $comment->readBy->count() }}</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -238,14 +270,6 @@
                                     </div>
                                     @endif
                                 </div>
-                                
-                                @if($comment->readBy->count() > 0)
-                                <div class="card-footer bg-light py-1">
-                                    <small class="text-muted">
-                                        <i class="fa fa-check-circle"></i> Dibaca oleh {{ $comment->readBy->count() }} orang
-                                    </small>
-                                </div>
-                                @endif
                             </div>
                         </div>
                     </div>
@@ -293,122 +317,56 @@
                         </div>
                     </div>
                     @endif
-                    
-                    <!-- Feedback Section (only for completed tickets) -->
-                    @if($ticket->status == 'Selesai')
-                        @if(!$ticket->feedback)
-                        <hr>
-                        <div class="mt-4">
-                            <h5 class="mb-3"><i class="fa fa-star text-warning me-1"></i> Berikan Feedback</h5>
-                            <div class="card bg-light border-0">
-                                <div class="card-body">
-                                    <p class="text-muted">Bantu kami meningkatkan layanan dengan memberikan feedback Anda tentang penanganan tiket ini.</p>
-                                    
-                                    <form action="{{ route('user.feedback.store') }}" method="POST" class="mt-3">
-                                        @csrf
-                                        <input type="hidden" name="ticket_id" value="{{ $ticket->id }}">
-                                        
-                                        <div class="form-group mb-4">
-                                            <label class="form-label fw-bold">Rating Pelayanan</label>
-                                            <div class="star-rating d-flex flex-wrap gap-3 mt-2">
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input visually-hidden" type="radio" name="rating" id="rating1" value="1" required>
-                                                    <label class="form-check-label rating-star" for="rating1">
-                                                        <i class="fa fa-star fa-2x"></i>
-                                                        <span class="d-block mt-1">Sangat Buruk</span>
-                                                    </label>
-                                                </div>
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input visually-hidden" type="radio" name="rating" id="rating2" value="2">
-                                                    <label class="form-check-label rating-star" for="rating2">
-                                                        <i class="fa fa-star fa-2x"></i>
-                                                        <span class="d-block mt-1">Buruk</span>
-                                                    </label>
-                                                </div>
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input visually-hidden" type="radio" name="rating" id="rating3" value="3">
-                                                    <label class="form-check-label rating-star" for="rating3">
-                                                        <i class="fa fa-star fa-2x"></i>
-                                                        <span class="d-block mt-1">Cukup</span>
-                                                    </label>
-                                                </div>
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input visually-hidden" type="radio" name="rating" id="rating4" value="4">
-                                                    <label class="form-check-label rating-star" for="rating4">
-                                                        <i class="fa fa-star fa-2x"></i>
-                                                        <span class="d-block mt-1">Baik</span>
-                                                    </label>
-                                                </div>
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input visually-hidden" type="radio" name="rating" id="rating5" value="5">
-                                                    <label class="form-check-label rating-star" for="rating5">
-                                                        <i class="fa fa-star fa-2x"></i>
-                                                        <span class="d-block mt-1">Sangat Baik</span>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="form-group mb-4">
-                                            <label for="komentar" class="form-label fw-bold">Komentar</label>
-                                            <textarea class="form-control" id="komentar" name="komentar" rows="3" required placeholder="Bagaimana pengalaman Anda dengan layanan kami?"></textarea>
-                                        </div>
-                                        
-                                        <div class="text-end">
-                                            <button type="submit" class="btn btn-primary">
-                                                <i class="fa fa-send me-1"></i> Kirim Feedback
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                        @else
-                        <hr>
-                        <div class="mt-4">
-                            <h5 class="mb-3"><i class="fa fa-star text-warning me-1"></i> Feedback Anda</h5>
-                            <div class="card bg-light border-0">
-                                <div class="card-body">
-                                    <div class="text-center mb-3">
-                                        <div class="rating-display mb-2">
-                                            @for($i = 1; $i <= 5; $i++)
-                                                @if($i <= $ticket->feedback->rating)
-                                                    <i class="fa fa-star fa-2x text-warning"></i>
-                                                @else
-                                                    <i class="fa fa-star-o fa-2x text-muted"></i>
-                                                @endif
-                                            @endfor
-                                        </div>
-                                        <div class="rating-label">
-                                            @php
-                                                $ratingLabel = '';
-                                                switch($ticket->feedback->rating) {
-                                                    case 1: $ratingLabel = 'Sangat Buruk'; break;
-                                                    case 2: $ratingLabel = 'Buruk'; break;
-                                                    case 3: $ratingLabel = 'Cukup'; break;
-                                                    case 4: $ratingLabel = 'Baik'; break;
-                                                    case 5: $ratingLabel = 'Sangat Baik'; break;
-                                                }
-                                            @endphp
-                                            <span class="badge bg-secondary">{{ $ratingLabel }}</span>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="p-3 bg-white rounded">
-                                        <h6 class="fw-bold mb-2">Komentar:</h6>
-                                        <p>{{ $ticket->feedback->komentar }}</p>
-                                    </div>
-                                    
-                                    <div class="text-muted text-end mt-2 small">
-                                        Dikirim pada: {{ $ticket->feedback->created_at ? $ticket->feedback->created_at->format('d M Y H:i') : 'N/A' }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        @endif
-                    @endif
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Feedback Modal -->
+<div class="modal fade" id="feedbackModal" tabindex="-1" role="dialog" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="feedbackModalLabel">Berikan Feedback</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="feedbackForm" action="{{ route('ticket.feedback.store') }}" method="POST">
+                <div class="modal-body">
+                    @csrf
+                    <input type="hidden" name="ticket_id" value="{{ $ticket->id }}">
+                    
+                    <p class="text-muted">Bantu kami meningkatkan layanan dengan memberikan rating untuk penanganan tiket ini.</p>
+                    
+                    <div class="form-group text-center mb-4">
+                        <label class="form-label fw-bold d-block mb-3">Rating Pelayanan</label>
+                        <div class="star-rating d-flex justify-content-center gap-3 mt-2">
+                            @for($i = 1; $i <= 5; $i++)
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input visually-hidden" type="radio" name="rating" id="modalRating{{ $i }}" value="{{ $i }}" required>
+                                    <label class="form-check-label modal-rating-star" for="modalRating{{ $i }}">
+                                        <i class="fa fa-star fa-2x"></i>
+                                        <span class="d-block mt-1">
+                                            @if($i == 1) Sangat Buruk
+                                            @elseif($i == 2) Buruk
+                                            @elseif($i == 3) Cukup
+                                            @elseif($i == 4) Baik
+                                            @else Sangat Baik
+                                            @endif
+                                        </span>
+                                    </label>
+                                </div>
+                            @endfor
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Kirim Feedback</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -452,27 +410,30 @@
         background-color: #e7f3ff !important;
     }
     
-    .rating-star {
+    .modal-rating-star {
         cursor: pointer;
         text-align: center;
         color: #ccc;
         transition: all 0.2s;
+        margin: 0 10px;
     }
-    
-    .rating-star:hover i,
-    .form-check-input:checked + .rating-star i {
+
+    .modal-rating-star:hover i,
+    .form-check-input:checked + .modal-rating-star i {
         color: #ffc107;
     }
-    
-    .rating-star span {
+
+    .modal-rating-star span {
         font-size: 12px;
         color: #6c757d;
     }
-    
-    .form-check-input:checked + .rating-star span {
+
+    .form-check-input:checked + .modal-rating-star span {
         color: #495057;
         font-weight: 500;
     }
+
+
     
     .note-editor .dropdown-toggle::after {
         all: unset;
@@ -485,6 +446,48 @@
     .note-editor .note-modal-footer {
         box-sizing: content-box;
     }
+
+    /* Complete hiding of radio buttons */
+    .form-check-input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+        margin: 0;
+    }
+    
+    /* Better spacing for the rating stars */
+    .star-rating {
+        display: flex;
+        justify-content: space-around;
+        width: 100%;
+    }
+    
+    .form-check-inline {
+        margin-right: 0;
+    }
+
+    .comment-readers {
+        display: flex;
+        align-items: center;
+        cursor: help;
+    }
+
+    .readers-count {
+        margin-left: 3px;
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+
+    .tooltip-inner {
+        max-width: 300px;
+        text-align: left;
+    }
+
+    .text-muted.small {
+        margin-right: 0.4rem !important; /* Increase the space */
+    }
+
 </style>
 @endpush
 
@@ -496,19 +499,18 @@ $(document).ready(function() {
         placeholder: 'Tuliskan komentar Anda di sini...',
         tabsize: 2,
         height: 200,
-            tabsize: 2,
-            height: 250,
-            toolbar: [
-                "fontsize",
-                "paragraph",
-                "table",
-                ["insert", ["link"]],
-                "codeview",
-            ],
+        toolbar: [
+            "fontsize",
+            "paragraph",
+            "table",
+            ["insert", ["link"]],
+            "codeview",
+        ],
         fontSizes: ['8', '9', '10', '11', '12', '14', '18', '24', '36'],
         callbacks: {
             onInit: function() {
                 console.log('Summernote initialized successfully');
+                $('.note-editable').css('line-height', '1.4');
             },
             onImageUpload: function(files) {
                 toastr.warning('Untuk menambahkan gambar, gunakan fitur lampiran');
@@ -516,31 +518,87 @@ $(document).ready(function() {
         }
     });
     
-    // Mark comments as read when viewed
-function markAsRead(element, commentId) {
-    $.ajax({
-        url: '{{ route("ticket.comment.markAsRead") }}',
-        type: 'POST',
-        data: {
-            _token: '{{ csrf_token() }}',
-            comment_ids: [commentId]
-        },
-        success: function(response) {
-            if (response.status) {
-                // Change icon to read
-                $(element).removeClass('fa-eye text-primary').addClass('fa-eye-slash text-muted');
-                $(element).attr('title', 'Tandai belum dibaca');
-                $(element).attr('onclick', `markAsUnread(this, ${commentId})`);
-                
-                // Remove "Baru" badge
-                $(element).closest('.d-flex').parent().find('.badge.bg-danger').remove();
-                
-                // Remove border if it exists
-                $(element).closest('.card').removeClass('border-start border-danger border-3');
+    // Define the missing markCommentsAsRead function
+    function markCommentsAsRead() {
+        // Get all unread comments
+        const unreadComments = $('.border-danger.border-3').closest('.card').find('.fa-eye.text-primary');
+        
+        if (unreadComments.length > 0) {
+            // Collect all comment IDs
+            const commentIds = [];
+            unreadComments.each(function() {
+                commentIds.push($(this).data('id'));
+            });
+            
+            // Mark all as read in one request
+            if (commentIds.length > 0) {
+                $.ajax({
+                    url: '{{ route("ticket.comment.markAsRead") }}',
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        comment_ids: commentIds
+                    },
+                    success: function(response) {
+                        if (response.status) {
+                            // Update UI for all marked comments
+                            unreadComments.each(function() {
+                                const $icon = $(this);
+                                $icon.removeClass('fa-eye text-primary').addClass('fa-eye-slash text-muted');
+                                $icon.attr('title', 'Tandai belum dibaca');
+                                const commentId = $icon.data('id');
+                                $icon.attr('onclick', `markAsUnread(this, ${commentId})`);
+                                
+                                // Remove "Baru" badge
+                                $icon.closest('.d-flex').parent().find('.badge.bg-danger').remove();
+                                
+                                // Remove border
+                                $icon.closest('.card').removeClass('border-start border-danger border-3');
+                            });
+                        }
+                    }
+                });
             }
         }
+    }
+    
+    // Call the function after 3 seconds
+    setTimeout(markCommentsAsRead, 3000);
+
+    // Mark comments as read when viewed
+    function markAsRead(element, commentId) {
+        $.ajax({
+            url: '{{ route("ticket.comment.markAsRead") }}',
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                comment_ids: [commentId]
+            },
+            success: function(response) {
+                if (response.status) {
+                    // Change icon to read
+                    $(element).removeClass('fa-eye text-primary').addClass('fa-eye-slash text-muted');
+                    $(element).attr('title', 'Tandai belum dibaca');
+                    $(element).attr('onclick', `markAsUnread(this, ${commentId})`);
+                    
+                    // Remove "Baru" badge
+                    $(element).closest('.d-flex').parent().find('.badge.bg-danger').remove();
+                    
+                    // Remove border if it exists
+                    $(element).closest('.card').removeClass('border-start border-danger border-3');
+                }
+            }
+        });
+    }
+
+    $(function () {
+        $('[data-bs-toggle="tooltip"]').tooltip({
+            html: true,
+            trigger: 'hover',
+            boundary: 'window',
+            placement: 'top'
+        });
     });
-}
     
     // Mark comments as read after 3 seconds on page
     setTimeout(markCommentsAsRead, 3000);
@@ -554,23 +612,26 @@ function markAsRead(element, commentId) {
         const originalText = submitBtn.html();
         submitBtn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Mengirim...');
         
+        // Get ticket ID from the form
+        const ticketId = $('input[name="ticket_id"]').val();
+        
         // Create FormData object for file uploads
         const formData = new FormData(this);
-        formData.append('komentar', $('.summernote').summernote('code'));
+        
+        // Add summernote content - IMPORTANT: Use 'pesan' instead of 'komentar'
+        formData.append('pesan', $('.summernote').summernote('code'));
         
         $.ajax({
-            url: '{{ route("ticket.comment.store") }}',
+            url: '/ticket/comment/store',
             type: 'POST',
             data: formData,
             processData: false,
             contentType: false,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
             success: function(response) {
                 if (response.status) {
-                    // Show success message
-                    toastr.options = {
-                        "progressBar": true,
-                        "timeOut": "1500"
-                    };
                     toastr.success(response.message);
                     
                     // Clear form
@@ -587,6 +648,7 @@ function markAsRead(element, commentId) {
                 }
             },
             error: function(xhr) {
+                console.error('Error:', xhr.responseText);
                 toastr.error('Terjadi kesalahan saat mengirim komentar');
                 submitBtn.prop('disabled', false).html(originalText);
             }
@@ -594,11 +656,11 @@ function markAsRead(element, commentId) {
     });
     
     // Star rating functionality
-    $('.rating-star').hover(
+    $('.modal-rating-star').hover(
         function() {
             const rating = $(this).prev('input').val();
             for (let i = 1; i <= rating; i++) {
-                $(`#rating${i}`).next('.rating-star').find('i').addClass('text-warning');
+                $(`#modalRating${i}`).next('.modal-rating-star').find('i').addClass('text-warning');
             }
         },
         function() {
@@ -607,12 +669,50 @@ function markAsRead(element, commentId) {
             }
         }
     );
-    
+
     $('input[name="rating"]').change(function() {
-        $('.rating-star i').removeClass('text-warning');
+        $('.modal-rating-star i').removeClass('text-warning');
         const rating = $(this).val();
         for (let i = 1; i <= rating; i++) {
-            $(`#rating${i}`).next('.rating-star').find('i').addClass('text-warning');
+            $(`#modalRating${i}`).next('.modal-rating-star').find('i').addClass('text-warning');
+        }
+    });
+});
+
+// Handle feedback form submission
+$('#feedbackForm').submit(function(e) {
+    e.preventDefault();
+    
+    // Disable submit button and show loading
+    const submitBtn = $(this).find('button[type="submit"]');
+    const originalText = submitBtn.html();
+    submitBtn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Mengirim...');
+    
+    $.ajax({
+        url: $(this).attr('action'),
+        type: 'POST',
+        data: $(this).serialize(),
+        success: function(response) {
+            if (response.status) {
+                // Hide modal
+                $('#feedbackModal').modal('hide');
+                
+                // Show success message
+                toastr.success(response.message);
+                
+                // Reload page after short delay to show the feedback stars
+                setTimeout(function() {
+                    location.reload();
+                }, 1500);
+            } else {
+                toastr.error(response.message);
+                submitBtn.prop('disabled', false).html(originalText);
+            }
+        },
+        error: function(xhr) {
+            console.error('Error:', xhr.responseText);
+            toastr.error('Terjadi kesalahan saat mengirim feedback');
+            submitBtn.prop('disabled', false).html(originalText);
         }
     });
 });
