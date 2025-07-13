@@ -23,43 +23,53 @@ class CommentController extends Controller
             'lampiran.*' => 'nullable|file|max:5120' // 5MB limit per file
         ]);
         
-        // Check if the user is authorized to comment on this ticket
         $ticket = Ticket::findOrFail($request->ticket_id);
-        if ($ticket->user_id != Auth::id() && $ticket->assigned_to != Auth::id()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Anda tidak diizinkan menambahkan komentar pada tiket ini'
-            ], 403);
-        }
+        $user = Auth::user();
         
-        // Handle file uploads if any
-        $lampiran = [];
-        if ($request->hasFile('lampiran')) {
-            foreach ($request->file('lampiran') as $file) {
-                $path = $file->store('comment-lampiran', 'public');
-                $lampiran[] = [
-                    'name' => $file->getClientOriginalName(),
-                    'type' => $file->getClientMimeType(),
-                    'size' => $file->getSize(),
-                    'path' => $path
-                ];
+        // Check authorization based on user role
+        if ($user->role_id == 3) { // Role teknisi
+            // Verify that technician is responsible for this ticket category
+            $isAssigned = $user->penanggungjawabs()
+                         ->where('kategori_id', $ticket->kategori_id)
+                         ->exists();
+            
+            if (!$isAssigned) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Anda tidak ditugaskan untuk kategori tiket ini'
+                ], 403);
+            }
+        } else { // Role user biasa
+            // Check if the user is the ticket owner
+            if ($ticket->user_id != $user->id) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Anda tidak diizinkan menambahkan komentar pada tiket ini'
+                ], 403);
             }
         }
         
-        // Create comment
+        // Handle file uploads
+        $lampiranPaths = [];
+        if ($request->hasFile('lampiran')) {
+            foreach ($request->file('lampiran') as $file) {
+                $lampiranPaths[] = $file->store('comments', 'public');
+            }
+        }
+        
+        // Create the comment
         $comment = Comment::create([
             'ticket_id' => $request->ticket_id,
-            'user_id' => Auth::id(),
+            'user_id' => $user->id,
             'pesan' => $request->pesan,
-            'lampiran' => !empty($lampiran) ? $lampiran : null
+            'lampiran' => !empty($lampiranPaths) ? $lampiranPaths : null,
         ]);
         
-        // Update ticket's last comment info
-        $ticket->last_comment_by = Auth::id();
+        // Update ticket's last_comment_at
         $ticket->last_comment_at = now();
         $ticket->save();
         
-        // Mark as read by the comment author - FIXED: Use the new helper method
+        // Mark as read by the comment author
         $this->markSingleCommentAsRead($comment->id);
         
         return response()->json([
@@ -79,46 +89,36 @@ class CommentController extends Controller
         }
     }
 
-
     /**
      * Mark comments as read by current user (public route method)
      */
-    public function markAsRead(Request $request)
-    {
-        $request->validate([
-            'comment_ids' => 'required|array',
-            'comment_ids.*' => 'exists:comments,id'
-        ]);
-        
-        foreach ($request->comment_ids as $commentId) {
-            $this->markSingleCommentAsRead($commentId);
+public function markAsRead(Request $request)
+{
+    $request->validate([
+        'comment_ids' => 'required|array',
+        'comment_ids.*' => 'exists:comments,id'
+    ]);
+    
+    $user = Auth::user();
+    $commentIds = $request->comment_ids;
+    $markedCount = 0;
+    
+    \Log::info('Marking comments as read', ['user_id' => $user->id, 'comment_ids' => $commentIds]);
+    
+    foreach($commentIds as $commentId) {
+        $comment = \App\Models\Comment::find($commentId);
+        if ($comment && !$comment->readBy->contains($user->id)) {
+            $comment->readBy()->attach($user->id, ['read_at' => now()]);
+            $markedCount++;
         }
-        
-        return response()->json([
-            'status' => true,
-            'message' => 'Comments marked as read'
-        ]);
     }
-
-    /**
-     * Get readers for a comment
-     */
-    public function getReaders($commentId)
-    {
-        $comment = Comment::with('readBy')->findOrFail($commentId);
-        
-        // Check if user is allowed to see this comment's read receipts
-        $ticket = Ticket::findOrFail($comment->ticket_id);
-        if ($ticket->user_id != Auth::id() && $ticket->assigned_to != Auth::id()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Anda tidak diizinkan melihat data ini'
-            ], 403);
-        }
-        
-        return response()->json([
-            'status' => true,
-            'readers' => $comment->readBy
-        ]);
-    }
+    
+    \Log::info('Comments marked as read', ['count' => $markedCount]);
+    
+    return response()->json([
+        'status' => true,
+        'message' => 'Komentar ditandai sebagai dibaca',
+        'count' => $markedCount
+    ]);
+}
 }

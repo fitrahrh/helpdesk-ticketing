@@ -231,7 +231,7 @@
                                                    data-id="{{ $comment->id }}" 
                                                    data-bs-toggle="tooltip" 
                                                    data-bs-html="true"
-                                                   title="<strong>Dibaca oleh:</strong>
+                                                   title="<strong></strong>
                                                           @if($comment->readBy->count() > 0)
                                                               @foreach($comment->readBy as $reader)
                                                                   {{ $reader->first_name }} {{ $reader->last_name }}{{ !$loop->last ? '<br>' : '' }}
@@ -566,29 +566,57 @@ $(document).ready(function() {
     setTimeout(markCommentsAsRead, 3000);
 
     // Mark comments as read when viewed
-    function markAsRead(element, commentId) {
-        $.ajax({
-            url: '{{ route("ticket.comment.markAsRead") }}',
-            type: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',
-                comment_ids: [commentId]
-            },
-            success: function(response) {
-                if (response.status) {
-                    // Change icon to read
-                    $(element).removeClass('fa-eye text-primary').addClass('fa-eye-slash text-muted');
-                    $(element).attr('title', 'Tandai belum dibaca');
-                    $(element).attr('onclick', `markAsUnread(this, ${commentId})`);
-                    
-                    // Remove "Baru" badge
-                    $(element).closest('.d-flex').parent().find('.badge.bg-danger').remove();
-                    
-                    // Remove border if it exists
-                    $(element).closest('.card').removeClass('border-start border-danger border-3');
+    function markCommentsAsRead() {
+        // Gunakan selector yang KONSISTEN untuk menemukan komentar yang belum dibaca
+        const unreadCards = $('.border-danger.border-3');
+        
+        if (unreadCards.length > 0) {
+            const commentIds = [];
+            
+            unreadCards.each(function() {
+                const commentId = $(this).find('[data-id]').data('id');
+                if (commentId) {
+                    commentIds.push(commentId);
                 }
+            });
+            
+            if (commentIds.length > 0) {
+                console.log('Marking comments as read:', commentIds);
+                
+                $.ajax({
+                    url: '/ticket/comment/mark-as-read', // KONSISTEN untuk SEMUA VIEW
+                    type: 'POST',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        comment_ids: commentIds
+                    },
+                    success: function(response) {
+                        if (response.status) {
+                            unreadCards.each(function() {
+                                // 1. Hapus border merah
+                                $(this).removeClass('border-start border-danger border-3');
+                                
+                                // 2. Update ikon dengan cara yang KONSISTEN
+                                const $icon = $(this).find('[data-id]');
+                                if ($icon.length > 0) {
+                                    $icon.addClass('text-secondary').removeClass('text-muted');
+                                    
+                                    // 3. Update jumlah pembaca - PENTING!
+                                    const $readerCount = $icon.next('.readers-count');
+                                    if ($readerCount.length > 0) {
+                                        let currentCount = parseInt($readerCount.text() || '0');
+                                        $readerCount.text(currentCount + 1);
+                                    }
+                                }
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('Error:', xhr);
+                    }
+                });
             }
-        });
+        }
     }
 
     $(function () {
@@ -599,9 +627,6 @@ $(document).ready(function() {
             placement: 'top'
         });
     });
-    
-    // Mark comments as read after 3 seconds on page
-    setTimeout(markCommentsAsRead, 3000);
     
     // Handle comment submission with attachment
     $('#commentForm').submit(function(e) {

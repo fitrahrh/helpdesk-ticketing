@@ -73,6 +73,11 @@ protected $fillable = [
         return $this->hasMany(Ticket::class);
     }
 
+    public function penanggungjawabs()
+    {
+        return $this->hasMany(Penanggungjawab::class);
+    }
+
     /**
      * Check if user has a specific permission
      */

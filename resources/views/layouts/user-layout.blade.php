@@ -206,9 +206,6 @@
                         <a class="nav-link {{ request()->is('/') ? 'active' : '' }}" href="{{ url('/') }}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->is('/pengetahuan') ? 'active' : '' }}" href="{{ url('/pengetahuan') }}">Pengetahuan Dasar</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link {{ request()->is('/admin') ? 'active' : '' }}" href="{{ url('/admin') }}">Dashboard</a>
                     </li>
                     <li class="nav-item dropdown">
@@ -221,6 +218,9 @@
                             <a class="dropdown-item" href="{{ url('/ticket/disposisi') }}">Disposisi</a>
                             <a class="dropdown-item" href="{{ url('/ticket/selesai') }}">Selesai</a>
                         </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('/teknisi/baru') ? 'active' : '' }}" href="{{ url('/teknisi/baru') }}">Teknisi</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
@@ -259,7 +259,7 @@
                 <a class="nav-link" href="{{ url('/ticket/pending') }}">Ticket</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ url('/pengetahuan') }}">Pengetahuan Dasar</a>
+                <a class="nav-link" href="{{ url('/ticket/pending') }}">Teknisi</a>
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="mobileUserDropdown" role="button" data-toggle="dropdown">

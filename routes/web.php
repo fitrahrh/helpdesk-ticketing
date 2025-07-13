@@ -124,10 +124,36 @@ Route::middleware(['auth'])->prefix('ticket')->name('ticket.')->group(function (
     Route::post('/feedback/store', [App\Http\Controllers\Feedback\FeedbackController::class, 'store'])->name('feedback.store');
     
     // Comment route
-    Route::post('/comment/store', [App\Http\Controllers\Comments\CommentController::class, 'store'])->name('ticket.comment.store');
-    Route::get('/comment/{ticketId}', [App\Http\Controllers\Comments\CommentController::class, 'index'])->name('comment.index');
-    
-    // Mark comments as read
+    Route::post('/comment/store', [App\Http\Controllers\Comments\CommentController::class, 'store'])->name('comment.store');
     Route::post('/comment/mark-as-read', [App\Http\Controllers\Comments\CommentController::class, 'markAsRead'])->name('comment.markAsRead');
 }); 
+
+// Teknisi Ticket Routes
+Route::middleware(['auth'])->prefix('teknisi')->name('teknisi.')->group(function() {
+    // Baru Tickets
+    Route::get('/baru', [App\Http\Controllers\Ticket\TeknisiTicketController::class, 'indexBaru'])->name('baru');
+    Route::get('/baru/data', [App\Http\Controllers\Ticket\TeknisiTicketController::class, 'baruData'])->name('baru.data');
+    
+    // Diproses Tickets
+    Route::get('/diproses', [App\Http\Controllers\Ticket\TeknisiTicketController::class, 'indexDiproses'])->name('diproses');
+    Route::get('/diproses/data', [App\Http\Controllers\Ticket\TeknisiTicketController::class, 'diprosesData'])->name('diproses.data');
+    
+    // Selesai Tickets
+    Route::get('/selesai', [App\Http\Controllers\Ticket\TeknisiTicketController::class, 'indexSelesai'])->name('selesai');
+    Route::get('/selesai/data', [App\Http\Controllers\Ticket\TeknisiTicketController::class, 'selesaiData'])->name('selesai.data');
+    
+    // Ticket Details
+    Route::get('/ticket/{id}', [App\Http\Controllers\Ticket\TeknisiTicketController::class, 'show'])->name('ticket.show');
+    
+    // Ticket Actions
+    Route::put('/ticket/{id}/approve', [App\Http\Controllers\Ticket\TeknisiTicketController::class, 'approve'])->name('ticket.approve');
+    Route::put('/ticket/{id}/disposisi', [App\Http\Controllers\Ticket\TeknisiTicketController::class, 'disposisi'])->name('ticket.disposisi');
+    Route::put('/ticket/{id}/close', [App\Http\Controllers\Ticket\TeknisiTicketController::class, 'close'])->name('ticket.close');
+    Route::put('/ticket/{id}/urgency', [App\Http\Controllers\Ticket\TeknisiTicketController::class, 'updateUrgency'])->name('ticket.urgency');
+
+    // Comment route
+    Route::post('/comment/store', [App\Http\Controllers\Comments\CommentController::class, 'store'])->name('comment.store');
+    // Mark comments as read
+    Route::post('/comment/mark-as-read', [App\Http\Controllers\Comments\CommentController::class, 'markAsRead'])->name('comment.markAsRead');
+});
 

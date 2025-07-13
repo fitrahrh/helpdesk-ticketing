@@ -123,7 +123,7 @@ public function index()
                     ->orderBy('created_at', 'asc')
                     ->get();
         
-        return view('layouts.user.ticket.detail.index', compact('ticket', 'histories'));
+        return view('layouts.user.detail-tiket.index', compact('ticket', 'histories'));
     }
     
     /**
