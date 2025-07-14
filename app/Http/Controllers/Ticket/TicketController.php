@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Ticket;
 use App\Http\Controllers\Controller;
 use App\Models\Ticket;
 use App\Models\Kategori;
+use App\Models\Skpd;
 use App\Models\User;
 use App\Models\History;
 use Illuminate\Http\Request;
@@ -95,8 +96,8 @@ class TicketController extends Controller
      */
     public function indexDisposisi()
     {
-        $kategoris = Kategori::all();
-        return view('layouts.admin.ticket.disposisi.index', compact('kategoris'));
+        $skpds = Skpd::with('kategoris')->get(); // Fetch SKPDs with their categories
+        return view('layouts.admin.ticket.disposisi.index', compact('skpds'));
     }
 
     /**

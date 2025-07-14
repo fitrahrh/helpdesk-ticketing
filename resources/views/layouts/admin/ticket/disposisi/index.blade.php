@@ -62,11 +62,15 @@
                 <input type="hidden" name="ticket_id" id="ticket_id">
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="kategori_id">Pilih Kategori Baru</label>
-                        <select class="form-control" id="kategori_id" name="kategori_id" required>
+                        <label for="kategori_id">Kategori</label>
+                        <select class="form-control select2" id="kategori_id" name="kategori_id" required>
                             <option value="">Pilih Kategori</option>
-                            @foreach($kategoris as $kategori)
-                                <option value="{{ $kategori->id }}">{{ $kategori->name }} ({{ $kategori->skpd ? $kategori->skpd->name : '-' }})</option>
+                            @foreach($skpds as $skpd)
+                                <optgroup label="{{ $skpd->name }}">
+                                    @foreach($skpd->kategoris as $kategori)
+                                        <option value="{{ $kategori->id }}">{{ $kategori->name }}</option>
+                                    @endforeach
+                                </optgroup>
                             @endforeach
                         </select>
                     </div>

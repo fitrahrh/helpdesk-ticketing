@@ -111,6 +111,7 @@ Route::middleware(['auth'])->prefix('ticket')->name('ticket.')->group(function (
 
     // Ticket creation route
     Route::get('/create', [App\Http\Controllers\Ticket\UserTicketController::class, 'create'])->name('create');
+    Route::put('/ticket/{id}', [App\Http\Controllers\Ticket\UserTicketController::class, 'update'])->name('ticket.update');
     Route::post('/', [App\Http\Controllers\Ticket\UserTicketController::class, 'store'])->name('store');
     
     // Status routes - SPECIFIC ROUTES FIRST

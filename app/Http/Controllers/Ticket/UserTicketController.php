@@ -319,4 +319,29 @@ public function index()
             })
             ->make(true);
     }
+    
+    /**
+     * Update an existing ticket
+     */
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'judul' => 'required|string|max:255',
+            'masalah' => 'required|string',
+        ]);
+
+        $ticket = Ticket::findOrFail($id);
+
+        // Ensure the user can only update their own tickets
+        if ($ticket->user_id !== Auth::id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $ticket->update([
+            'judul' => $request->judul,
+            'masalah' => $request->masalah,
+        ]);
+
+        return response()->json(['message' => 'Tiket berhasil diperbarui']);
+    }
 }
