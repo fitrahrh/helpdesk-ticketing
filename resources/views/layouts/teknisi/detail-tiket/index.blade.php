@@ -228,20 +228,29 @@
                                             </span>
                                         </div>
                                         <div class="d-flex align-items-center">
-                                            <div class="text-muted small me-5">
-                                                @if($comment->created_at)
-                                                    @php
-                                                        $commentDate = \Carbon\Carbon::parse($comment->created_at);
-                                                        $now = \Carbon\Carbon::now();
-                                                    @endphp
-                                                    
-                                                    @if($commentDate->gt($now))
-                                                        {{ $commentDate->format('d M Y H:i') }}
-                                                    @else
-                                                        {{ $commentDate->locale('id')->diffForHumans() }}
-                                                    @endif
+                                            <div class="text-muted small me-5 comment-timestamp"> {{-- Tambahkan class comment-timestamp --}}
+                                                @php
+                                                    $commentDate = \Carbon\Carbon::parse($comment->created_at);
+                                                    $updatedDate = \Carbon\Carbon::parse($comment->updated_at);
+                                                    $now = \Carbon\Carbon::now();
+                                                    // Cek apakah updated_at lebih dari created_at + buffer (misal 5 detik)
+                                                    $isEdited = $comment->updated_at && $updatedDate->gt($commentDate->addSeconds(5));
+                                                @endphp
+
+                                                @if($isEdited)
+                                                    {{-- Jika diedit, tampilkan hanya waktu edit --}}
+                                                    (Diedit {{ $updatedDate->locale('id')->diffForHumans() }})
                                                 @else
-                                                    Waktu tidak tercatat
+                                                    {{-- Jika belum diedit, tampilkan waktu dibuat --}}
+                                                    @if($comment->created_at)
+                                                        @if($commentDate->gt($now))
+                                                            {{ $commentDate->format('d M Y H:i') }}
+                                                        @else
+                                                            {{ $commentDate->locale('id')->diffForHumans() }}
+                                                        @endif
+                                                    @else
+                                                        Waktu tidak tercatat
+                                                    @endif
                                                 @endif
                                             </div>
                                             
@@ -265,10 +274,21 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card-body py-3">
-                                    <div class="comment-content">
-                                        {!! $comment->pesan !!}
+                                <div class="card-body py-3 comment-body"> {{-- Tambahkan class comment-body --}}
+                                    <div class="d-flex justify-content-between align-items-start"> {{-- Tambahkan div flex untuk layout --}}
+                                        <div class="comment-content flex-grow-1 me-3"> {{-- Konten komentar --}}
+                                            {!! $comment->pesan !!}
+                                        </div>
+                                        {{-- Tombol Edit dipindahkan ke sini --}}
+                                        @if($comment->user_id == Auth::id())
+                                            <button type="button" class="btn btn-sm btn-outline-secondary btn-edit-comment flex-shrink-0"
+                                                    data-id="{{ $comment->id }}"
+                                                    data-pesan="{{ $comment->pesan }}"> {{-- Simpan pesan di data attribute --}}
+                                                <i class="fa fa-edit"></i> Edit
+                                            </button>
+                                        @endif
                                     </div>
+                                    
                                     
                                     @if(!empty($comment->lampiran))
                                     <div class="mt-3 pt-2 border-top">
@@ -426,6 +446,36 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
                     <button type="submit" class="btn btn-warning">Ubah Urgensi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edit Comment -->
+<div class="modal fade" id="editCommentModal" tabindex="-1" role="dialog" aria-labelledby="editCommentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editCommentModalLabel">Edit Komentar</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="editCommentForm">
+                @csrf
+                @method('PUT') {{-- Gunakan method PUT --}}
+                <input type="hidden" name="comment_id" id="edit_comment_id">
+                <div class="modal-body">
+                    <div class="form-group mb-3">
+                        <label for="edit_pesan" class="form-label">Pesan Komentar</label>
+                        <textarea class="form-control summernote-edit" id="edit_pesan" name="pesan" rows="5" required></textarea>
+                    </div>
+                    {{-- Lampiran tidak bisa diedit/ditambah setelah komentar dibuat --}}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary" id="updateCommentBtn">Simpan Perubahan</button>
                 </div>
             </form>
         </div>
@@ -625,6 +675,102 @@ $(document).ready(function() {
             error: function(xhr) {
                 console.error('Error:', xhr.responseText);
                 toastr.error('Terjadi kesalahan saat mengirim komentar');
+                submitBtn.prop('disabled', false).html(originalText);
+            }
+        });
+    });
+
+    $('#edit_pesan').summernote({
+        placeholder: 'Edit komentar Anda di sini...',
+        tabsize: 2,
+        height: 200,
+        toolbar: [
+            "fontsize",
+            "paragraph",
+            "table",
+            ["insert", ["link"]],
+            "codeview",
+        ],
+        fontSizes: ['8', '9', '10', '11', '12', '14', '18', '24', '36'],
+        callbacks: {
+            onInit: function() {
+                console.log('Summernote Edit initialized successfully');
+                $('#editCommentModal .note-editable').css('line-height', '1.4');
+            },
+            onImageUpload: function(files) {
+                toastr.warning('Untuk menambahkan gambar, gunakan fitur lampiran saat membuat komentar baru.');
+            }
+        }
+    });
+
+    // Handle click on Edit Comment button
+    $(document).on('click', '.btn-edit-comment', function() {
+        const commentId = $(this).data('id');
+        const commentPesan = $(this).data('pesan'); // Ambil pesan dari data attribute
+
+        // Populate the modal form
+        $('#edit_comment_id').val(commentId);
+        // Set Summernote content
+        $('#edit_pesan').summernote('code', commentPesan);
+
+        // Show the modal
+        $('#editCommentModal').modal('show');
+    });
+
+    // Handle Edit Comment Form Submission
+    $('#editCommentForm').submit(function(e) {
+        e.preventDefault();
+
+        const commentId = $('#edit_comment_id').val();
+        const submitBtn = $(this).find('#updateCommentBtn');
+        const originalText = submitBtn.html();
+
+        submitBtn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Menyimpan...');
+
+        // Get Summernote content
+        const editedPesan = $('#edit_pesan').summernote('code');
+
+        $.ajax({
+            url: `/ticket/comment/${commentId}`, // Gunakan route update komentar
+            type: 'PUT',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                pesan: editedPesan
+            },
+            success: function(response) {
+                if (response.status) {
+                    toastr.success(response.message);
+
+                    // Update the comment on the page
+                    const commentElement = $(`[data-id="${commentId}"]`).closest('.d-flex.mb-3'); // Cari elemen komentar berdasarkan ID
+                    if (commentElement.length > 0) {
+                        // Update isi komentar
+                        commentElement.find('.comment-content').html(editedPesan);
+
+                        // Temukan container timestamp
+                        const timestampContainer = commentElement.find('.comment-timestamp');
+
+                        if (timestampContainer.length > 0) {
+                            // Hapus konten timestamp yang lama
+                            timestampContainer.empty();
+
+                            // Tambahkan waktu edit yang baru
+                            const updatedTime = response.updated_at_for_humans; // Ambil dari response
+                            const editedSpan = $(`<span class="text-muted small">(Diedit ${updatedTime})</span>`);
+                            timestampContainer.append(editedSpan);
+                        }
+                    }
+
+                    // Hide the modal
+                    $('#editCommentModal').modal('hide');
+                } else {
+                    toastr.error(response.message);
+                }
+                submitBtn.prop('disabled', false).html(originalText);
+            },
+            error: function(xhr) {
+                console.error('Error:', xhr.responseText);
+                toastr.error('Terjadi kesalahan saat memperbarui komentar');
                 submitBtn.prop('disabled', false).html(originalText);
             }
         });

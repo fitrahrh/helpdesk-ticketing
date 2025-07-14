@@ -132,6 +132,7 @@ Route::middleware(['auth'])->prefix('ticket')->name('ticket.')->group(function (
     Route::post('/feedback/store', [App\Http\Controllers\Feedback\FeedbackController::class, 'store'])->name('feedback.store');
     
     // Comment route
+    Route::put('/comment/{id}', [App\Http\Controllers\Comments\CommentController::class, 'update'])->name('comment.update'); // <-- Tambahkan route ini
     Route::post('/comment/store', [App\Http\Controllers\Comments\CommentController::class, 'store'])->name('comment.store');
     Route::post('/comment/mark-as-read', [App\Http\Controllers\Comments\CommentController::class, 'markAsRead'])->name('comment.markAsRead');
 }); 

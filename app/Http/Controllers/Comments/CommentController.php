@@ -100,6 +100,38 @@ class CommentController extends Controller
             'message' => 'Komentar berhasil ditambahkan'
         ]);
     }
+
+    /**
+     * Update an existing comment
+     */
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'pesan' => 'required|string',
+        ]);
+
+        $comment = Comment::findOrFail($id);
+        $user = Auth::user();
+
+        // Check if the logged-in user is the author of the comment
+        if ($comment->user_id !== $user->id) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Anda tidak diizinkan mengedit komentar ini'
+            ], 403);
+        }
+
+        // Update the comment message
+        $comment->pesan = $request->pesan;
+        // updated_at akan otomatis terupdate saat save() dipanggil
+        $comment->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Komentar berhasil diperbarui',
+            'updated_at_for_humans' => $comment->updated_at->locale('id')->diffForHumans() // Kirim updated_at
+        ]);
+    }
     
     /**
      * Private helper method to mark a single comment as read
