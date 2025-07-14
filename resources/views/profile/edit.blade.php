@@ -71,11 +71,20 @@
                             <label for="telegram_id" class="col-md-4 col-form-label text-md-right">Telegram ID</label>
                             <div class="col-md-6">
                                 <input id="telegram_id" type="text" class="form-control @error('telegram_id') is-invalid @enderror" name="telegram_id" value="{{ old('telegram_id', $user->telegram_id) }}">
+                                <small class="form-text text-muted">
+                                    Kirim pesan <b>/start</b> ke bot Telegram Anda, lalu masukkan Telegram ID Anda di sini.<br>
+                                    <a href="https://t.me/Helpdesk_Provinsi_Riau_Tetrisbot?start=1" target="_blank" class="text-primary">
+                                        Klik di sini untuk membuka bot Telegram
+                                    </a>
+                                </small>
                                 @error('telegram_id')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
+                                <button type="button" class="btn btn-info mt-2" id="btnTestTelegram">
+                                    <i class="fab fa-telegram-plane"></i> Test Notifikasi Telegram
+                                </button>
                             </div>
                         </div>
                         <div class="form-group row mb-0">
@@ -149,6 +158,34 @@
     @if($errors->any())
         toastr.error("{{ $errors->first() }}");
     @endif
+
+    $('#btnTestTelegram').click(function() {
+        let telegramId = $('#telegram_id').val();
+        if (!telegramId) {
+            toastr.warning('Masukkan Telegram ID terlebih dahulu');
+            return;
+        }
+        $.ajax({
+            url: "{{ route('profile.test-telegram') }}",
+            method: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                telegram_id: telegramId
+            },
+            beforeSend: function() {
+                $('#btnTestTelegram').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Mengirim...');
+            },
+            success: function(response) {
+                toastr.success(response.message || 'Notifikasi berhasil dikirim ke Telegram Anda');
+            },
+            error: function(xhr) {
+                toastr.error(xhr.responseJSON?.message || 'Gagal mengirim notifikasi');
+            },
+            complete: function() {
+                $('#btnTestTelegram').prop('disabled', false).html('<i class="fab fa-telegram-plane"></i> Test Notifikasi Telegram');
+            }
+        });
+    });
 </script>
 @endpush
 @endsection

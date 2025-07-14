@@ -21,5 +21,9 @@ class AppServiceProvider extends ServiceProvider
     {
         // Register view composer
         view()->composer('components.sidebar', \App\Http\ViewComposers\SidebarComposer::class);
+
+        \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::except([
+            '/telegram',
+        ]);
     }
 }

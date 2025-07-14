@@ -8,6 +8,7 @@
 
     <!-- Title -->
     <title>HelpDesk</title>
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="https://fonts.googleapis.com/" />

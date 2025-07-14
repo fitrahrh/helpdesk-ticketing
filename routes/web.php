@@ -2,17 +2,17 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ExampleController;
+use Telegram\Bot\Laravel\Facades\Telegram;
 
-
+Route::post('/telegram', [App\Http\Controllers\TelegramWebhookController::class, 'handle']);
 Auth::routes();
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [App\Http\Controllers\Ticket\UserTicketController::class, 'index'])->name('dashboard');
-
-    Route::get('/admin', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-    Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::post('/profile/test-telegram', [App\Http\Controllers\ProfileController::class, 'testTelegram'])->name('profile.test-telegram');
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('/admin', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+        Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
     Route::get('/profile/change-password', [ProfileController::class, 'changepassword'])->name('profile.change-password');
@@ -162,4 +162,3 @@ Route::middleware(['auth'])->prefix('teknisi')->name('teknisi.')->group(function
     // Mark comments as read
     Route::post('/comment/mark-as-read', [App\Http\Controllers\Comments\CommentController::class, 'markAsRead'])->name('comment.markAsRead');
 });
-

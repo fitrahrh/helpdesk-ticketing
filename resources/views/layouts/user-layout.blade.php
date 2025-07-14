@@ -9,7 +9,7 @@
 
     <!-- Using dns-prefetch -->
     <link rel="dns-prefetch" href="https://fonts.googleapis.com/" />
-
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 

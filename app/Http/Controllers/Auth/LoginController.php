@@ -38,6 +38,6 @@ class LoginController extends Controller
         // Set session flash untuk toastr
         $request->session()->flash('status', 'Logout berhasil!');
 
-        return redirect('/login');
+        return redirect()->route('login');
     }
 }

@@ -58,4 +58,22 @@ class ProfileController extends Controller
 
         return back()->with('status', 'Password berhasil Diubah!');
     }
+    public function testTelegram(Request $request)
+    {
+        $telegram_id = $request->input('telegram_id');
+        if (!$telegram_id) {
+            return response()->json(['message' => 'Telegram ID tidak ditemukan'], 422);
+        }
+
+        try {
+            // Kirim pesan ke Telegram
+            \Telegram::sendMessage([
+                'chat_id' => $telegram_id,
+                'text' => 'Tes notifikasi berhasil! Akun Anda sudah terhubung dengan sistem Helpdesk.'
+            ]);
+            return response()->json(['message' => 'Notifikasi berhasil dikirim ke Telegram Anda']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Gagal mengirim notifikasi: ' . $e->getMessage()], 500);
+        }
+    }
 }
