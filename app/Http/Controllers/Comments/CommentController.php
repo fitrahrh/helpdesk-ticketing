@@ -69,6 +69,29 @@ class CommentController extends Controller
         $ticket->last_comment_at = now();
         $ticket->save();
         
+        // Kirim notifikasi kepada user pelapor jika memiliki telegram_id
+        if ($user->role_id == 3 && $ticket->user && $ticket->user->telegram_id) {
+            $kategoriName = $ticket->kategori ? $ticket->kategori->name : '-';
+            $ticketUrl = route('ticket.ticket.show', $ticket->id); // Pastikan route ini benar untuk user
+            $userMessage = "💬 *Tiket kamu telah di respon* 💬\n\n" .
+                "• *No. Tiket*: `$ticket->no_tiket`\n" .
+                "• *Judul*: `{$ticket->judul}`\n" .
+                "• *Kategori*: `{$kategoriName}`\n" .
+                "• *Urgensi*: `{$ticket->urgensi}`\n\n" .
+                "Teknisi telah merespons tiket Anda. Silakan baca dan cek detailnya di [detail tiket]($ticketUrl) untuk " .
+                "melihat komentar lebih lanjut serta membalas melalui sistem Helpdesk.";
+
+            try {
+                \Telegram::sendMessage([
+                    'chat_id' => $ticket->user->telegram_id,
+                    'text' => $userMessage,
+                    'parse_mode' => 'Markdown'
+                ]);
+            } catch (\Exception $e) {
+                \Log::error('Gagal mengirim notifikasi Telegram ke user: ' . $e->getMessage());
+            }
+        }
+
         // Mark as read by the comment author
         $this->markSingleCommentAsRead($comment->id);
         

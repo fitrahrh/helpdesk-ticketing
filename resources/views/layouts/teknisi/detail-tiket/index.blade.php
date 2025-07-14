@@ -101,7 +101,7 @@
                         </button>
                         
                         <button type="button" class="btn btn-success btn-sm ms-2" data-toggle="modal" data-target="#closeModal">
-                            <i class="fa fa-check me-1"></i> Selesaikan
+                            <i class="fa fa-check me-1"></i> Tandai Selesai?
                         </button>
                         @endif
                     </div>
@@ -422,10 +422,6 @@
                             <option value="Mendesak" {{ $ticket->urgensi == 'Mendesak' ? 'selected' : '' }}>Mendesak</option>
                         </select>
                     </div>
-                    <div class="form-group mt-3">
-                        <label for="alasan_urgensi">Alasan Perubahan (opsional)</label>
-                        <textarea class="form-control" id="alasan_urgensi" name="alasan" rows="3" placeholder="Jelaskan alasan perubahan urgensi"></textarea>
-                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
@@ -441,7 +437,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="closeModalLabel">Selesaikan Tiket</h5>
+                <h5 class="modal-title" id="closeModalLabel">Tandai Tiket</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -450,14 +446,15 @@
                 @csrf
                 <input type="hidden" name="_method" value="PUT">
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label for="solusi">Solusi</label>
-                        <textarea class="form-control summernote" id="solusi-summernote" name="solusi" rows="5" required></textarea>
+                    <!-- Hapus textarea solusi, hanya konfirmasi -->
+                    <div class="alert alert-success">
+                        <i class="fa fa-check-circle me-2"></i>
+                        Apakah Anda yakin ingin menandai tiket ini sebagai selesai?
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-success">Selesaikan Tiket</button>
+                    <button type="submit" class="btn btn-success">Tandai Tiket</button>
                 </div>
             </form>
         </div>
@@ -694,8 +691,8 @@ $(document).ready(function() {
                     $('#disposisiModal').modal('hide');
                     
                     setTimeout(function() {
-                        location.reload();
-                    }, 1500);
+                        window.location.href = response.redirect_url || window.location.href;
+                    }, 1000);
                 } else {
                     toastr.error(response.message);
                     submitBtn.prop('disabled', false).html(originalText);

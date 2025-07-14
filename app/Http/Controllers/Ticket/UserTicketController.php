@@ -7,6 +7,8 @@ use App\Models\Ticket;
 use App\Models\Kategori;
 use App\Models\History;
 use App\Models\Skpd;
+use App\Models\User;
+use App\Models\Penanggungjawab;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
@@ -88,15 +90,28 @@ public function index()
         $kategori = Kategori::find($request->kategori_id);
         $kategoriName = $kategori ? $kategori->name : 'Tidak diketahui';
         
-        // telegram notification
-        $telegramMessage = "Tiket Baru Diajukan\n" .
-            "No Tiket: $ticketNumber\n" .
-            "Judul: {$request->judul}\n" .
-            "Kategori: $kategoriName\n" .
-            "Urgensi: {$request->urgensi}\n" .
-            "Masalah: {$request->masalah}\n";
-        if ($lampiran) {
-            $telegramMessage .= "Lampiran: " . Storage::disk('public')->url($lampiran) . "\n";
+        // Kirim notifikasi ke Telegram user jika ada telegram_id
+        $userTelegramId = Auth::user()->telegram_id;
+        if ($userTelegramId) {
+            $userMessage = "🔔 *Tiket Berhasil Dibuat!* 🔔\n\n" .
+                " *No. Tiket*:  `$ticketNumber`\n" .
+                " *Judul*:  `{$request->judul}`\n" .
+                " *Kategori*:  `{$kategoriName}`\n" .
+                " *Urgensi*:  `{$request->urgensi}`\n" .
+                " *Status*:  `Baru`\n\n" .
+                "✅ *Tiket Anda telah berhasil dibuat dan akan segera diproses oleh tim kami.*\n\n" .
+                "📌 *Pantau perkembangan tiket melalui Telegram!* \n" .
+                "Ketik */help* untuk bantuan atau */test* untuk menguji notifikasi.";
+
+            try {
+                \Telegram::sendMessage([
+                    'chat_id' => $userTelegramId,
+                    'text' => $userMessage,
+                    'parse_mode' => 'Markdown'
+                ]);
+            } catch (\Exception $e) {
+                \Log::error('Gagal kirim notifikasi Telegram ke user: ' . $e->getMessage());
+            }
         }
 
         // Create the ticket
@@ -111,6 +126,31 @@ public function index()
             'lampiran' => $lampiran,
         ]);
         
+        // Kirim notifikasi ke teknisi yang bertanggung jawab
+        $teknisiIds = Penanggungjawab::where('kategori_id', $ticket->kategori_id)->pluck('user_id');
+        $teknisiList = User::whereIn('id', $teknisiIds)->whereNotNull('telegram_id')->get();
+
+        foreach ($teknisiList as $teknisi) {
+            $kategoriName = $kategoriName ?? ($ticket->kategori ? $ticket->kategori->name : '-');
+            $ticketUrl = route('teknisi.ticket.show', $ticket->id); // Ganti dengan route detail teknisi
+            $teknisiMessage = "👨🏻‍🔧 *Tugas Baru Tiket Helpdesk* 👨🏻‍🔧\n\n" .
+                " *No. Tiket*: `$ticket->no_tiket`\n" .
+                " *Judul*: `{$ticket->judul}`\n" .
+                " *Kategori*: `{$kategoriName}`\n" .
+                " *Urgensi*: `{$ticket->urgensi}`\n\n" .
+                "Klik [detail tiket]($ticketUrl) untuk mulai menangani tiket ini.";
+
+            try {
+                \Telegram::sendMessage([
+                    'chat_id' => $teknisi->telegram_id,
+                    'text' => $teknisiMessage,
+                    'parse_mode' => 'Markdown'
+                ]);
+            } catch (\Exception $e) {
+                \Log::error('Gagal kirim notifikasi Telegram ke teknisi: ' . $e->getMessage());
+            }
+        }
+
         // Create history entry with human-readable values
         History::create([
             'ticket_id' => $ticket->id,
@@ -394,6 +434,28 @@ public function index()
         $oldValues = [
             'status' => $ticket->status // Ambil status sebelum diupdate
         ];
+
+        // Send Telegram notification to user
+        $userTelegramId = Auth::user()->telegram_id;
+        if ($userTelegramId) {
+            $userMessage = "🔔 *Tiket Anda Telah Ditutup!* 🔔\n\n" .
+                " *No. Tiket*:  `{$ticket->no_tiket}`\n" .
+                " *Judul*:  `{$ticket->judul}`\n" .
+                " *Kategori*:  `{$ticket->kategori->name}`\n" .
+                " *Urgensi*:  `{$ticket->urgensi}`\n" .
+                " *Status*:  `Selesai`\n\n" .
+                "✅ *Tiket Anda telah berhasil ditutup. Terima kasih atas partisipasi Anda!*";
+
+            try {
+                \Telegram::sendMessage([
+                    'chat_id' => $userTelegramId,
+                    'text' => $userMessage,
+                    'parse_mode' => 'Markdown'
+                ]);
+            } catch (\Exception $e) {
+                \Log::error('Gagal kirim notifikasi Telegram ke user: ' . $e->getMessage());
+            }
+        }
 
         // Create history entry
         History::create([

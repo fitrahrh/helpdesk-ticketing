@@ -253,7 +253,33 @@ class TeknisiTicketController extends Controller
         $oldValues = [
             'status' => $ticket->status
         ];
-        
+
+        // Kirim notifikasi ke Telegram user jika ada telegram_id
+        $userTelegramId = $ticket->user->telegram_id;
+        if ($userTelegramId) {
+            $kategoriName = $ticket->kategori ? $ticket->kategori->name : '-';
+            $userMessage = "🔔 *Tiket Anda Diproses Teknisi* 🔔\n\n" .
+                " *Detail Tiket*\n" .
+                " *No. Tiket*: `$ticket->no_tiket`\n" .
+                " *Judul*: `{$ticket->judul}`\n" .
+                " *Kategori*: `{$kategoriName}`\n" .
+                " *Urgensi*: `{$ticket->urgensi}`\n" .
+                " *Status*: `Diproses`\n\n" .
+                "🚀 Teknisi kami telah mulai menangani tiket Anda. Mohon menunggu konfirmasi lebih lanjut.\n\n" .
+                "📌 Anda dapat memantau perkembangan tiket melalui Telegram.\n\n" .
+                "💡 Ketik */help* untuk bantuan atau */test* untuk menguji notifikasi.";
+
+            try {
+                \Telegram::sendMessage([
+                    'chat_id' => $userTelegramId,
+                    'text' => $userMessage,
+                    'parse_mode' => 'Markdown'
+                ]);
+            } catch (\Exception $e) {
+                \Log::error('Gagal kirim notifikasi Telegram ke user: ' . $e->getMessage());
+            }
+        }
+
         // Update ticket
         $ticket->status = 'Diproses';
         $ticket->approved_by = Auth::id();
@@ -314,6 +340,33 @@ class TeknisiTicketController extends Controller
             'status' => $ticket->status
         ];
         
+        // Kirim notifikasi ke Telegram user jika ada telegram_id
+        $userTelegramId = $ticket->user->telegram_id;
+        if ($userTelegramId) {
+            $kategoriName = $ticket->kategori ? $ticket->kategori->name : '-';
+            $userMessage = "⚠️ *Tiket Anda Salah Disposisi* ⚠️\n\n" .
+                " *Detail Tiket*\n" .
+                " *No. Tiket*: `$ticket->no_tiket`\n" .
+                " *Judul*: `{$ticket->judul}`\n" .
+                " *Kategori*: `{$kategoriName}`\n" .
+                " *Urgensi*: `{$ticket->urgensi}`\n" .
+                " *Status*: `Salah Disposisi`\n\n" .
+                "🔄 Tiket Anda telah salah disposisi dan sedang diarahkan ke admin untuk diperbarui kategori yang benar. Harap menunggu konfirmasi lebih lanjut setelah kategori diperbarui.\n\n" .
+                "📌 Anda dapat memantau perkembangan tiket melalui Telegram.\n\n" .
+                "💡 Ketik */help* untuk bantuan atau */test* untuk menguji notifikasi.";
+
+            try {
+                \Telegram::sendMessage([
+                    'chat_id' => $userTelegramId,
+                    'text' => $userMessage,
+                    'parse_mode' => 'Markdown'
+                ]);
+            } catch (\Exception $e) {
+                \Log::error('Gagal kirim notifikasi Telegram ke user: ' . $e->getMessage());
+            }
+        }
+
+        
         // Update ticket
         $ticket->status = 'Disposisi';
         $ticket->save();
@@ -334,7 +387,8 @@ class TeknisiTicketController extends Controller
         
         return response()->json([
             'status' => true,
-            'message' => 'Tiket berhasil didisposisi dan akan ditinjau oleh admin'
+            'message' => 'Tiket berhasil didisposisi dan akan ditinjau oleh admin',
+            'redirect_url' => route('teknisi.baru')
         ]);
     }
     
@@ -343,7 +397,6 @@ class TeknisiTicketController extends Controller
      */
     public function close(Request $request, $id)
     {
-
         if (!Auth::user()->hasPermission('akses_teknisi')) {
             return response()->json([
                 'status' => false,
@@ -351,36 +404,57 @@ class TeknisiTicketController extends Controller
             ], 403);
         }
 
-        $request->validate([
-            'solusi' => 'required|string',
-        ]);
-        
         $ticket = Ticket::findOrFail($id);
-        
+
         // Check if technician is responsible for this ticket category
         $isAssigned = Auth::user()->penanggungjawabs()
                             ->where('kategori_id', $ticket->kategori_id)
                             ->exists();
-        
+
         if (!$isAssigned) {
             return response()->json([
                 'status' => false,
                 'message' => 'Anda tidak ditugaskan untuk kategori tiket ini.'
             ]);
         }
-        
+
         // Save old values for history
         $oldValues = [
             'status' => $ticket->status
         ];
-        
+
         // Update ticket
         $ticket->status = 'Selesai';
         $ticket->closed_by = Auth::id();
         $ticket->closed_at = now();
-        $ticket->solusi = $request->solusi;
         $ticket->save();
-        
+
+        // Kirim notifikasi ke Telegram user jika ada telegram_id
+        $userTelegramId = $ticket->user->telegram_id;
+        if ($userTelegramId) {
+            $kategoriName = $ticket->kategori ? $ticket->kategori->name : '-';
+            $ticketUrl = route('ticket.ticket.show', $ticket->id); // Ganti dengan route yang sesuai untuk user
+            $userMessage = "✅ *Tiket Anda Telah Selesai!* ✅\n\n" .
+                "*Detail Tiket*\n" .
+                " *No. Tiket*: `$ticket->no_tiket`\n" .
+                " *Judul*: `{$ticket->judul}`\n" .
+                " *Kategori*: `{$kategoriName}`\n" .
+                " *Urgensi*: `{$ticket->urgensi}`\n" .
+                " *Status*: `Selesai`\n\n" .
+                "🎉 Tiket Anda telah ditandai selesai oleh teknisi. Bantu kami meningkatkan layanan dengan memberikan rating untuk penanganan tiket ini di [halaman tiket ini]($ticketUrl).\n\n" .
+                "💡 Ketik */help* untuk bantuan atau */test* untuk menguji notifikasi.";
+
+            try {
+                \Telegram::sendMessage([
+                    'chat_id' => $userTelegramId,
+                    'text' => $userMessage,
+                    'parse_mode' => 'Markdown'
+                ]);
+            } catch (\Exception $e) {
+                \Log::error('Gagal kirim notifikasi Telegram ke user: ' . $e->getMessage());
+            }
+        }
+
         // Create history entry
         History::create([
             'ticket_id' => $ticket->id,
@@ -388,12 +462,12 @@ class TeknisiTicketController extends Controller
             'status' => 'status_changed',
             'old_values' => $oldValues,
             'new_values' => ['status' => 'Selesai'],
-            'keterangan' => 'Tiket ditutup dengan solusi'
+            'keterangan' => 'Tiket ditandai selesai oleh teknisi'
         ]);
-        
+
         return response()->json([
             'status' => true,
-            'message' => 'Tiket berhasil ditutup'
+            'message' => 'Tiket berhasil ditandai selesai'
         ]);
     }
     
@@ -437,6 +511,31 @@ class TeknisiTicketController extends Controller
         $ticket->urgensi = $request->urgensi;
         $ticket->save();
         
+        // Kirim notifikasi ke Telegram user jika ada telegram_id
+        $userTelegramId = $ticket->user->telegram_id;
+        if ($userTelegramId) {
+            $kategoriName = $ticket->kategori ? $ticket->kategori->name : '-';
+            $userMessage = "🔔 *Urgensi Tiket Anda Diubah* 🔔\n\n" .
+                " *Detail Tiket*\n" .
+                " *No. Tiket*: `$ticket->no_tiket`\n" .
+                " *Judul*: `{$ticket->judul}`\n" .
+                " *Kategori*: `{$kategoriName}`\n" .
+                " *Urgensi Baru*: `{$request->urgensi}`\n\n" .
+                "🚀 Urgensi tiket Anda telah diubah oleh teknisi. Mohon menunggu konfirmasi lebih lanjut.\n\n" .
+                "📌 Anda dapat memantau perkembangan tiket melalui Telegram.\n\n" .
+                "💡 Ketik */help* untuk bantuan atau */test* untuk menguji notifikasi.";
+
+            try {
+                \Telegram::sendMessage([
+                    'chat_id' => $userTelegramId,
+                    'text' => $userMessage,
+                    'parse_mode' => 'Markdown'
+                ]);
+            } catch (\Exception $e) {
+                \Log::error('Gagal kirim notifikasi Telegram ke user: ' . $e->getMessage());
+            }
+        }
+
         // Create history entry
         History::create([
             'ticket_id' => $ticket->id,
