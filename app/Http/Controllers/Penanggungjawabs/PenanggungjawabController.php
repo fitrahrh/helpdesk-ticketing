@@ -22,30 +22,6 @@ class PenanggungjawabController extends Controller
         return view('layouts.admin.penanggungjawab.index', compact('penanggungjawabs', 'users', 'skpds', 'kategoris'));
     }
 
-    public function datapenanggungjawab(Request $request)
-    {
-        $data = Penanggungjawab::with(['user', 'kategori.skpd'])->get();
-        
-        return DataTables::of($data)
-            ->addIndexColumn()
-            ->addColumn('user_name', function($row){
-                return $row->user ? $row->user->first_name . ' ' . $row->user->last_name : '-';
-            })
-            ->addColumn('kategori_name', function($row){
-                return $row->kategori ? $row->kategori->name : '-';
-            })
-            ->addColumn('skpd_name', function($row){
-                return $row->kategori && $row->kategori->skpd ? $row->kategori->skpd->name : '-';
-            })
-            ->addColumn('action', function($row){
-                $actionBtn = '<button type="button" class="btn btn-sm btn-warning btn-edit" data-id="'.$row->id.'"><i class="fas fa-edit"></i></button> ';
-                $actionBtn .= '<button type="button" class="btn btn-sm btn-danger" onclick="deletePenanggungjawab(\''.$row->id.'\')"><i class="fas fa-trash"></i></button>';
-                return $actionBtn;
-            })
-            ->rawColumns(['action'])
-            ->make(true);
-    }
-
     public function store(Request $request)
     {
         $request->validate([
@@ -113,5 +89,54 @@ class PenanggungjawabController extends Controller
             $response = ['status' => TRUE, 'message' => 'Penanggungjawab berhasil dihapus'];
         }
         return response()->json($response ?? ['status' => FALSE, 'message' => 'Penanggungjawab gagal dihapus']);
+    }
+
+    // Gunakan method ini yang mendukung filter
+    public function datapenanggungjawab(Request $request)
+    {
+        $query = Penanggungjawab::with(['user', 'kategori.skpd']);
+        
+        // Apply filters if provided
+        if ($request->filled('filter_skpd')) {
+            $query->whereHas('kategori', function($q) use ($request) {
+                $q->where('skpd_id', $request->filter_skpd);
+            });
+        }
+        
+        if ($request->filled('filter_kategori')) {
+            $query->where('kategori_id', $request->filter_kategori);
+        }
+        
+        if ($request->filled('filter_teknisi')) {
+            $query->where('user_id', $request->filter_teknisi);
+        }
+        
+        $data = $query->get();
+        
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->addColumn('user_name', function($row){
+                return $row->user ? $row->user->first_name . ' ' . $row->user->last_name : '-';
+            })
+            ->addColumn('kategori_name', function($row){
+                return $row->kategori ? $row->kategori->name : '-';
+            })
+            ->addColumn('skpd_name', function($row){
+                return $row->kategori && $row->kategori->skpd ? $row->kategori->skpd->name : '-';
+            })
+            ->addColumn('action', function($row){
+                $actionBtn = '<button type="button" class="btn btn-sm btn-warning btn-edit" data-id="'.$row->id.'"><i class="fas fa-edit"></i></button> ';
+                $actionBtn .= '<button type="button" class="btn btn-sm btn-danger" onclick="deletePenanggungjawab(\''.$row->id.'\')"><i class="fas fa-trash"></i></button>';
+                return $actionBtn;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+    }
+
+    // Add new route to get categories by SKPD
+    public function getKategoriBySkpd($skpd_id)
+    {
+        $kategoris = Kategori::where('skpd_id', $skpd_id)->get();
+        return response()->json($kategoris);
     }
 }

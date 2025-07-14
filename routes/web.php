@@ -79,6 +79,8 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::put('/penanggungjawab/{id}', [App\Http\Controllers\Penanggungjawabs\PenanggungjawabController::class, 'update'])->name('penanggungjawab.update');
     Route::delete('/penanggungjawab/{id}', [App\Http\Controllers\Penanggungjawabs\PenanggungjawabController::class, 'destroy'])->name('penanggungjawab.destroy');
 
+    Route::get('/get-kategori-by-skpd/{skpd_id}', [App\Http\Controllers\Penanggungjawabs\PenanggungjawabController::class, 'getKategoriBySkpd'])->name('get-kategori-by-skpd');
+
     Route::get('/baru', [App\Http\Controllers\Ticket\TicketController::class, 'indexBaru'])->name('baru');
     Route::get('/baru/data', [App\Http\Controllers\Ticket\TicketController::class, 'dataTicketBaru'])->name('baru.data');
     

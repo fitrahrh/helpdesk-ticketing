@@ -13,11 +13,56 @@
         <div class="section-body">
             <div class="row">
                 <div class="col-12">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4>Filter Penanggung Jawab</h4>
+                        </div>
+                        <div class="card-body">
+                            <form id="filterForm" class="row">
+                                <!-- Filter SKPD -->
+                                <div class="form-group col-md-3">
+                                    <label for="filter_skpd">SKPD</label>
+                                    <select class="form-control select2" id="filter_skpd" name="filter_skpd">
+                                        <option value="">Semua SKPD</option>
+                                        @foreach($skpds as $skpd)
+                                            <option value="{{ $skpd->id }}">{{ $skpd->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                
+                                <!-- Filter Kategori -->
+                                <div class="form-group col-md-3">
+                                    <label for="filter_kategori">Kategori</label>
+                                    <select class="form-control select2" id="filter_kategori" name="filter_kategori" disabled>
+                                        <option value="">Semua Kategori</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Filter Teknisi -->
+                                <div class="form-group col-md-3">
+                                    <label for="filter_teknisi">Teknisi</label>
+                                    <select class="form-control select2" id="filter_teknisi" name="filter_teknisi">
+                                        <option value="">Semua Teknisi</option>
+                                        @foreach($users as $user)
+                                            <option value="{{ $user->id }}">{{ $user->first_name }} {{ $user->last_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group col-md-3 d-flex align-items-end">
+                                    <button type="button" id="btn-filter" class="btn btn-primary mr-2">Terapkan Filter</button>
+                                    <button type="button" id="btn-reset" class="btn btn-secondary">Reset</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                     <div class="card">
                         <div class="card-header">
                             <h4>Daftar Penanggung Jawab</h4>
                             <div class="card-header-action">
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createPenanggungjawabModal"><i class="fas fa-plus"></i> Tambah Penanggung Jawab</button>
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createPenanggungjawabModal">
+                                    <i class="fas fa-plus"></i> Tambah Penanggung Jawab
+                                </button>
                             </div>
                         </div>
                         <div class="card-body">
@@ -48,17 +93,79 @@
 @push('scripts')
 <script>
     $(function() {
+        // Initialize Select2
+        $('.select2').select2();
+        
+        // Inisialisasi DataTable sekali saja dengan semua konfigurasi yang dibutuhkan
         let table = $('#penanggungjawab-table').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ route('admin.penanggungjawab.data') }}",
+            ajax: {
+                url: "{{ route('admin.penanggungjawab.data') }}",
+                data: function(d) {
+                    // Add filter parameters
+                    d.filter_skpd = $('#filter_skpd').val();
+                    d.filter_kategori = $('#filter_kategori').val();
+                    d.filter_teknisi = $('#filter_teknisi').val();
+                }
+            },
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                 { data: 'user_name', name: 'user_name' },
                 { data: 'kategori_name', name: 'kategori_name' },
                 { data: 'skpd_name', name: 'skpd_name' },
                 { data: 'action', name: 'action', orderable: false, searchable: false }
-            ]
+            ],
+            language: {
+                processing: '<i class="fa fa-spinner fa-spin fa-2x fa-fw"></i><span class="sr-only">Loading...</span>',
+                zeroRecords: "Tidak ada data",
+                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                infoEmpty: "Menampilkan 0 sampai 0 dari 0 data",
+                infoFiltered: "(disaring dari _MAX_ total data)",
+                lengthMenu: "Tampilkan _MENU_ data per halaman",
+                search: "Cari:",
+                paginate: {
+                    first: "Pertama",
+                    last: "Terakhir",
+                    next: "Selanjutnya",
+                    previous: "Sebelumnya"
+                }
+            }
+        });
+        
+        // Apply filter when button is clicked
+        $('#btn-filter').click(function() {
+            table.ajax.reload();
+        });
+        
+        // Reset filter
+        $('#btn-reset').click(function() {
+            $('#filter_skpd').val('').trigger('change');
+            $('#filter_kategori').val('').prop('disabled', true).trigger('change');
+            $('#filter_teknisi').val('').trigger('change');
+            table.ajax.reload();
+        });
+        
+        // Handle SKPD dropdown change to load related categories
+        $('#filter_skpd').change(function() {
+            let skpdId = $(this).val();
+            
+            if (skpdId) {
+                $.ajax({
+                    url: `/admin/get-kategori-by-skpd/${skpdId}`,
+                    type: 'GET',
+                    success: function(data) {
+                        $('#filter_kategori').prop('disabled', false);
+                        $('#filter_kategori').empty().append('<option value="">Semua Kategori</option>');
+                        
+                        $.each(data, function(key, value) {
+                            $('#filter_kategori').append(`<option value="${value.id}">${value.name}</option>`);
+                        });
+                    }
+                });
+            } else {
+                $('#filter_kategori').val('').prop('disabled', true).trigger('change');
+            }
         });
 
         // Save Penanggungjawab

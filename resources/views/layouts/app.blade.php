@@ -10,7 +10,7 @@
     <title>HelpDesk</title>
 
     <!-- Fonts -->
-    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com/" />
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
     <!-- Bootstrap CSS -->
@@ -178,6 +178,19 @@
             message = '' + message;
             return originalErrorToastr.call(this, message, title, options);
         };
+    </script>
+    <script>
+        @if(session('status'))
+            toastr.success("{{ session('status') }}");
+        @endif
+
+        @if(session('error'))
+            toastr.error("{{ session('error') }}");
+        @endif
+
+        @if($errors->any())
+            toastr.error("{{ $errors->first() }}");
+        @endif
     </script>
     @stack('scripts')
 </body>

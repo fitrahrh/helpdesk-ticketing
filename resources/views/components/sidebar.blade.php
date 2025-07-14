@@ -73,7 +73,7 @@
             <!-- History -->
             <li class="menu-header">History</li>
             <li class="{{ Request::is('admin/history*') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ url('admin/history') }}"><i class="fas fa-stopwatch"></i><span>Riwayat Tiket</span></a>
+                <a class="nav-link" href="{{ url('admin/history') }}"><i class="fas fa-history"></i><span>Riwayat Tiket</span></a>
             </li>
             
             <!-- Laporan -->
