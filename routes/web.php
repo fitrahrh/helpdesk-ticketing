@@ -98,6 +98,10 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     // Ticket history
     Route::get('/history', [App\Http\Controllers\History\HistoryController::class, 'index'])->name('history.index');
     Route::get('/history/data', [App\Http\Controllers\History\HistoryController::class, 'data'])->name('history.data');
+
+    Route::get('/harian', [App\Http\Controllers\Laporan\LaporanController::class, 'harian'])->name('report.harian');
+    Route::get('/bulanan', [App\Http\Controllers\Laporan\LaporanController::class, 'bulanan'])->name('report.bulanan');
+    Route::get('/berjangka', [App\Http\Controllers\Laporan\LaporanController::class, 'berjangka'])->name('report.berjangka');
 });
 
 // User Beranda & Ticket Management Routes
