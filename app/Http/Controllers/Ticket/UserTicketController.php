@@ -21,6 +21,10 @@ class UserTicketController extends Controller
      */
 public function index()
 {
+    if (!Auth::user()->hasPermission('akses_pelapor')) {
+        // Jika user tidak memiliki hak akses 'akses_pelapor', kembalikan ke halaman sebelumnya
+        return redirect()->back()->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+    }
     $userId = Auth::id();
 
     // Fetch only SKPDs that have categories
@@ -62,6 +66,7 @@ public function index()
      */
     public function store(Request $request)
     {
+        
         $request->validate([
             'judul' => 'required|string|max:255',
             'kategori_id' => 'required|exists:kategoris,id',
@@ -83,6 +88,17 @@ public function index()
         $kategori = Kategori::find($request->kategori_id);
         $kategoriName = $kategori ? $kategori->name : 'Tidak diketahui';
         
+        // telegram notification
+        $telegramMessage = "Tiket Baru Diajukan\n" .
+            "No Tiket: $ticketNumber\n" .
+            "Judul: {$request->judul}\n" .
+            "Kategori: $kategoriName\n" .
+            "Urgensi: {$request->urgensi}\n" .
+            "Masalah: {$request->masalah}\n";
+        if ($lampiran) {
+            $telegramMessage .= "Lampiran: " . Storage::disk('public')->url($lampiran) . "\n";
+        }
+
         // Create the ticket
         $ticket = Ticket::create([
             'no_tiket' => $ticketNumber,
@@ -343,5 +359,56 @@ public function index()
         ]);
 
         return response()->json(['message' => 'Tiket berhasil diperbarui']);
+    }
+    /**
+     * Close a ticket
+     */
+    public function close(Request $request, $id)
+    {
+
+        $ticket = Ticket::findOrFail($id);
+
+        // Ensure the user can only close their own tickets
+        if ($ticket->user_id !== Auth::id()) {
+            return response()->json([
+                'status' => false, // Tambahkan status false untuk unauthorized
+                'message' => 'Unauthorized'
+            ], 403);
+        }
+
+        // Prevent closing if already closed
+        if ($ticket->status === 'Selesai') {
+             return response()->json([
+                'status' => false, // Tambahkan status false jika sudah selesai
+                'message' => 'Tiket ini sudah selesai.'
+            ]);
+        }
+
+        // Update ticket status to 'Selesai'
+        $ticket->update([
+            'status' => 'Selesai',
+            'closed_at' => Carbon::now(),
+            'closed_by' => Auth::id(),
+        ]);
+        // Get old values for history
+        $oldValues = [
+            'status' => $ticket->status // Ambil status sebelum diupdate
+        ];
+
+        // Create history entry
+        History::create([
+            'ticket_id' => $ticket->id,
+            'user_id' => Auth::id(),
+            'status' => 'status_changed',
+            'old_values' => $oldValues,
+            'new_values' => ['status' => 'Selesai'],
+            'keterangan' => 'Tiket ditutup oleh pengguna'
+        ]);
+
+        // Ubah respons untuk menyertakan status: true
+        return response()->json([
+            'status' => true,
+            'message' => 'Tiket berhasil ditutup'
+        ]);
     }
 }

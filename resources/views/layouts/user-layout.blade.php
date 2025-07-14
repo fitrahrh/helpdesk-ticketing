@@ -207,9 +207,12 @@
                     <li class="nav-item">
                         <a class="nav-link {{ request()->is('/') ? 'active' : '' }}" href="{{ url('/') }}">Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->is('/admin') ? 'active' : '' }}" href="{{ url('/admin') }}">Dashboard</a>
-                    </li>
+                    @if(Auth::check() && Auth::user()->hasPermission('dashboard'))
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->is('/home') ? 'active' : '' }}" href="{{ url('/home') }}">Dashboard</a>
+                        </li>
+                    @endif
+                    @if(Auth::check() && Auth::user()->hasPermission('akses_pelapor'))
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle {{ request()->is('ticket*') ? 'active' : '' }}" href="#" id="ticketDropdown" role="button" data-toggle="dropdown">
                             Tiket
@@ -221,9 +224,12 @@
                             <a class="dropdown-item" href="{{ url('/ticket/selesai') }}">Selesai</a>
                         </div>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->is('/teknisi/baru') ? 'active' : '' }}" href="{{ url('/teknisi/baru') }}">Teknisi</a>
-                    </li>
+                    @endif
+                    @if(Auth::check() && Auth::user()->hasPermission('akses_teknisi'))
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->is('/teknisi/baru') ? 'active' : '' }}" href="{{ url('/teknisi/baru') }}">Teknisi</a>
+                        </li>
+                    @endif
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
                         {{ Auth::user()->first_name }} {{ Auth::user()->last_name ?? '' }}

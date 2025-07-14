@@ -60,7 +60,7 @@
                                 <i class="fa fa-check me-2 text-dark"></i> 
                                 <span class="{{ $ticket->status == 'Selesai' ? 'fw-bold' : '' }}">Selesai</span>
                             </div>
-                            <span class="badge {{ $ticket->status == 'Selesai' ? 'bg-success' : 'bg-secondary' }} rounded-pill">
+                            <span class="badge {{ $ticket->status == 'Selesai' ? 'bg-light' : 'bg-secondary' }} rounded-pill">
                                 {{ Auth::user()->tickets()->where('status', 'Selesai')->count() }}
                             </span>
                         </a>
@@ -135,7 +135,12 @@
                         <div>
                             <div class="fw-bold fs-5">{{ $ticket->user->first_name }} {{ $ticket->user->last_name }}</div>
                             <div class="text-dark">{{ $ticket->kategori && $ticket->kategori->skpd ? $ticket->kategori->skpd->name : '-' }}</div>
-                            <div class="text-muted">{{ $ticket->created_at->format('d M Y H:i') }}</div>
+                            <span class="badge bg-dark text-light me-2 mb-2">Kategori: {{ $ticket->kategori->name }}</span>
+                            <span class="badge bg-secondary me-2 mb-2">Dibuat: {{ $ticket->created_at->format('d M Y H:i') }}</span>
+                            
+                            @if($ticket->approved_at)
+                            <span class="badge bg-info me-2 mb-2">Diproses: {{ \Carbon\Carbon::parse($ticket->approved_at)->format('d M Y H:i') }}</span>
+                            @endif
                         </div>
                     </div>
                     <hr>
@@ -722,6 +727,53 @@ $(document).ready(function() {
         }
     });
 });
+
+// Handle close ticket button click
+// Handle "Tutup Tiket" button click
+    $('.close-ticket-btn').on('click', function(e) {
+        e.preventDefault(); // Prevent default link behavior
+
+        const ticketId = '{{ $ticket->id }}'; // Get ticket ID from the Blade variable
+
+        Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: "Anda akan menutup tiket ini. Aksi ini tidak dapat dibatalkan.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, Tutup Tiket!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '{{ route("ticket.close", $ticket->id) }}', // Assuming a route named 'ticket.close' exists
+                    type: 'PUT', // Use PUT or POST for updates
+                    data: {
+                        _token: '{{ csrf_token() }}', // Include CSRF token
+                        // You might need to send additional data if required by the backend
+                    },
+                    success: function(response) {
+                        if (response.status) {
+                            toastr.success(response.message);
+                            // Reload the page or update UI to reflect the status change
+                            $('#feedbackModal').modal('show');
+                            // Hapus tombol "Tutup Tiket" atau sembunyikan jika perlu
+                            $('.close-ticket-btn').hide();
+                            // Opsional: Update status tiket di UI tanpa reload
+                            $('.btn-{{ $statusColor }}').removeClass('btn-{{ $statusColor }}').addClass('btn-success').html('<i class="fa fa-circle-info me-1"></i> Status: Selesai');
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('Error:', xhr.responseText);
+                        toastr.error('Terjadi kesalahan saat menutup tiket');
+                    }
+                });
+            }
+        });
+    });
 
 // Handle feedback form submission
 $('#feedbackForm').submit(function(e) {

@@ -360,10 +360,6 @@
                 <input type="hidden" name="_method" value="PUT">
                 <div class="modal-body">
                     <p>Apakah Anda yakin ingin menyetujui dan memproses tiket ini?</p>
-                    <div class="form-group">
-                        <label for="komentar">Komentar (opsional)</label>
-                        <textarea class="form-control" id="komentar" name="komentar" rows="3" placeholder="Tambahkan komentar untuk pelapor"></textarea>
-                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>

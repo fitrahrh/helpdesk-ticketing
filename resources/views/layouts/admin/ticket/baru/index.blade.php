@@ -57,7 +57,7 @@
                     data: 'no_tiket', 
                     name: 'no_tiket',
                     render: function(data, type, row) {
-                        return '<a href="' + "{{ route('ticket.ticket.show', '') }}" + '/' + row.id + '" class="text-primary fw-bold"><span class="text-secondary">#</span>' + data + '</a>';
+                        return '<a href="' + "{{ route('teknisi.ticket.show', '') }}" + '/' + row.id + '" class="text-primary fw-bold"><span class="text-secondary">#</span>' + data + '</a>';
                     }
                 },
                 { data: 'pelapor', name: 'pelapor' },

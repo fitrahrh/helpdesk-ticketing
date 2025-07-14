@@ -20,6 +20,10 @@ class TeknisiTicketController extends Controller
      */
     public function indexBaru()
     {
+        if (!Auth::user()->hasPermission('akses_teknisi')) {
+            // Jika user tidak memiliki hak akses 'dashboard', kembalikan ke halaman sebelumnya
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+        }
         return view('layouts.teknisi.ticket.baru');
     }
     
@@ -28,6 +32,11 @@ class TeknisiTicketController extends Controller
      */
     public function baruData()
     {
+
+        if (!Auth::user()->hasPermission('akses_teknisi')) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+        }
+
         // Get categories assigned to this technician
         $kategoriIds = Auth::user()->penanggungjawabs()->pluck('kategori_id');
         
@@ -60,6 +69,9 @@ class TeknisiTicketController extends Controller
      */
     public function indexDiproses()
     {
+        if (!Auth::user()->hasPermission('akses_teknisi')) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+        }
         return view('layouts.teknisi.ticket.diproses');
     }
     
@@ -68,6 +80,9 @@ class TeknisiTicketController extends Controller
      */
     public function diprosesData()
     {
+        if (!Auth::user()->hasPermission('akses_teknisi')) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+        }
         // Get categories assigned to this technician
         $kategoriIds = Auth::user()->penanggungjawabs()->pluck('kategori_id');
         
@@ -103,6 +118,9 @@ class TeknisiTicketController extends Controller
      */
     public function indexSelesai()
     {
+        if (!Auth::user()->hasPermission('akses_teknisi')) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+        }
         return view('layouts.teknisi.ticket.selesai');
     }
     
@@ -111,6 +129,9 @@ class TeknisiTicketController extends Controller
      */
     public function selesaiData()
     {
+        if (!Auth::user()->hasPermission('akses_teknisi')) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+        }
         // Get categories assigned to this technician
         $kategoriIds = Auth::user()->penanggungjawabs()->pluck('kategori_id');
         
@@ -162,25 +183,43 @@ class TeknisiTicketController extends Controller
      */
     public function show($id)
     {
+        $user = Auth::user();
+        // Cek apakah user memiliki hak akses 'kelola_menu_tiket' (untuk Admin/Superadmin)
+        $canManageTickets = $user->hasPermission('kelola_menu_tiket');
+        $isTechnician = $user->hasPermission('akses_teknisi');
+
+        // Jika user bukan Admin/Superadmin DAN bukan Teknisi, tolak akses
+        if (!$canManageTickets && !$isTechnician) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+        }
+
+        // Cari tiket beserta relasi yang diperlukan
         $ticket = Ticket::with(['user', 'kategori', 'approvedBy', 'closedBy', 'comments.user', 'feedback'])
                         ->findOrFail($id);
-        
-        // Check if technician is responsible for this ticket category
-        $isAssigned = Auth::user()->penanggungjawabs()
-                            ->where('kategori_id', $ticket->kategori_id)
-                            ->exists();
-        
-        if (!$isAssigned) {
-            return redirect()->back()
-                ->with('error', 'Anda tidak ditugaskan untuk kategori tiket ini.');
+
+        // Jika user adalah Teknisi (dan bukan Admin/Superadmin), cek penugasan kategori
+        $isAssignedTechnician = false;
+        if ($isTechnician && !$canManageTickets) {
+            $isAssignedTechnician = $user->penanggungjawabs()
+                                        ->where('kategori_id', $ticket->kategori_id)
+                                        ->exists();
+
+            // Jika Teknisi tidak ditugaskan ke kategori ini, tolak akses
+            if (!$isAssignedTechnician) {
+                return redirect()->back()
+                    ->with('error', 'Anda tidak ditugaskan untuk kategori tiket ini.');
+            }
         }
-        
-        // Get ticket history
+
+        // Jika user adalah Admin/Superadmin ATAU Teknisi yang ditugaskan, lanjutkan
+        // Ambil riwayat tiket
         $histories = History::where('ticket_id', $id)
                     ->with('user')
                     ->orderBy('created_at', 'desc')
                     ->get();
-        
+
+        // Tampilkan view detail tiket teknisi
+        // Catatan: View ini mungkin berisi elemen/aksi spesifik untuk teknisi.
         return view('layouts.teknisi.detail-tiket.index', compact('ticket', 'histories'));
     }
     
@@ -189,6 +228,13 @@ class TeknisiTicketController extends Controller
      */
     public function approve(Request $request, $id)
     {
+        if (!Auth::user()->hasPermission('akses_teknisi')) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Anda tidak memiliki akses untuk melakukan aksi ini.'
+            ], 403);
+        }
+        
         $ticket = Ticket::findOrFail($id);
         
         // Check if technician is responsible for this ticket category
@@ -241,6 +287,13 @@ class TeknisiTicketController extends Controller
     
     public function disposisi(Request $request, $id)
     {
+
+        if (!Auth::user()->hasPermission('akses_teknisi')) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Anda tidak memiliki akses untuk melakukan aksi ini.'
+            ], 403);
+        }
         
         $ticket = Ticket::findOrFail($id);
         
@@ -290,6 +343,14 @@ class TeknisiTicketController extends Controller
      */
     public function close(Request $request, $id)
     {
+
+        if (!Auth::user()->hasPermission('akses_teknisi')) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Anda tidak memiliki akses untuk melakukan aksi ini.'
+            ], 403);
+        }
+
         $request->validate([
             'solusi' => 'required|string',
         ]);
@@ -341,6 +402,14 @@ class TeknisiTicketController extends Controller
      */
     public function updateUrgency(Request $request, $id)
     {
+
+        if (!Auth::user()->hasPermission('akses_teknisi')) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Anda tidak memiliki akses untuk melakukan aksi ini.'
+            ], 403);
+        }
+
         $request->validate([
             'urgensi' => 'required|in:Rendah,Sedang,Tinggi,Mendesak',
         ]);

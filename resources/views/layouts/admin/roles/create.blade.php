@@ -37,53 +37,53 @@
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input permission-checkbox" type="checkbox" name="hak_akses[]" id="pengajuan_tiket" value="pengajuan tiket">
-                                            <label class="form-check-label" for="pengajuan_tiket">
-                                                Pengajuan Tiket
+                                            <input class="form-check-input permission-checkbox" type="checkbox" name="hak_akses[]" id="data_master" value="data_master">
+                                            <label class="form-check-label" for="data_master">
+                                                Data Master
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input permission-checkbox" type="checkbox" name="hak_akses[]" id="persetujuan_tiket" value="persetujuan tiket">
-                                            <label class="form-check-label" for="persetujuan_tiket">
-                                                Persetujuan Tiket
+                                            <input class="form-check-input permission-checkbox" type="checkbox" name="hak_akses[]" id="kelola_penanggungjawab" value="kelola_penanggungjawab">
+                                            <label class="form-check-label" for="kelola_penanggungjawab">
+                                                Kelola Penanggung Jawab
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input permission-checkbox" type="checkbox" name="hak_akses[]" id="disposisi_tiket" value="disposisi tiket">
+                                            <input class="form-check-input permission-checkbox" type="checkbox" name="hak_akses[]" id="kelola_menu_tiket" value="kelola_menu_tiket">
+                                            <label class="form-check-label" for="kelola_menu_tiket">
+                                                Kelola Menu Tiket
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input permission-checkbox" type="checkbox" name="hak_akses[]" id="disposisi_tiket" value="disposisi_tiket">
                                             <label class="form-check-label" for="disposisi_tiket">
                                                 Disposisi Tiket
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input permission-checkbox" type="checkbox" name="hak_akses[]" id="all_tiket" value="all tiket">
-                                            <label class="form-check-label" for="all_tiket">
-                                                All Tiket
                                             </label>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-check">
-                                            <input class="form-check-input permission-checkbox" type="checkbox" name="hak_akses[]" id="kelola_user" value="kelola user">
-                                            <label class="form-check-label" for="kelola_user">
-                                                Kelola User
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input permission-checkbox" type="checkbox" name="hak_akses[]" id="kelola_role" value="kelola role">
-                                            <label class="form-check-label" for="kelola_role">
-                                                Kelola Role
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input permission-checkbox" type="checkbox" name="hak_akses[]" id="kelola_penanggungjawab" value="kelola penanggungjawab">
-                                            <label class="form-check-label" for="kelola_penanggungjawab">
-                                                Kelola Penanggungjawab
+                                            <input class="form-check-input permission-checkbox" type="checkbox" name="hak_akses[]" id="riwayat_tiket" value="riwayat_tiket">
+                                            <label class="form-check-label" for="riwayat_tiket">
+                                                Riwayat Tiket
                                             </label>
                                         </div>
                                         <div class="form-check">
                                             <input class="form-check-input permission-checkbox" type="checkbox" name="hak_akses[]" id="laporan" value="laporan">
                                             <label class="form-check-label" for="laporan">
                                                 Laporan
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input permission-checkbox" type="checkbox" name="hak_akses[]" id="akses_pelapor" value="akses_pelapor">
+                                            <label class="form-check-label" for="akses_pelapor">
+                                                Akses Pelapor
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input permission-checkbox" type="checkbox" name="hak_akses[]" id="akses_teknisi" value="akses_teknisi">
+                                            <label class="form-check-label" for="akses_teknisi">
+                                                Akses Teknisi
                                             </label>
                                         </div>
                                     </div>

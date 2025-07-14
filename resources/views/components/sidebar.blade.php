@@ -6,40 +6,50 @@
         <a href="/">HELPDESK</a>
         </div>
 
-        <!-- Main Menu -->
-        <ul class="sidebar-menu">
+            <!-- Main Menu -->
+            <ul class="sidebar-menu">
+            @if(Auth::check() && Auth::user()->hasPermission('dashboard'))
             <li class="menu-header">Main Menu</li>
             <li class="{{ Request::is('home') ? 'active' : '' }}">
                 <a class="nav-link" href="{{ url('home') }}"><i class="fas fa-fire"></i><span>Dashboard</span></a>
             </li>
-        <li class="dropdown {{ Request::is('admin/users*') || Request::is('admin/roles*') || Request::is('admin/skpd*') || Request::is('admin/bidang*') || Request::is('admin/jabatan*') || Request::is('admin/kategori*') ? 'active' : '' }}">
-            <a href="#" class="nav-link has-dropdown"><i class="fas fa-database"></i> <span>Data Master</span></a>
-            <ul class="dropdown-menu">
-                <li class="{{ Request::is('admin/users*') ? 'active' : '' }}">
-                    <a class="nav-link" href="{{ url('/admin/users') }}">User</a>
-                </li>
-                <li class="{{ Request::is('admin/roles*') ? 'active' : '' }}">
-                    <a class="nav-link" href="{{ url('admin/roles') }}">Role</a>
-                </li>
-                <li class="{{ Request::is('admin/skpd*') ? 'active' : '' }}">
-                    <a class="nav-link" href="{{ url('admin/skpd') }}">SKPD</a>
-                </li>
-                <li class="{{ Request::is('admin/bidang*') ? 'active' : '' }}">
-                    <a class="nav-link" href="{{ url('admin/bidang') }}">Bidang</a>
-                </li>
-                <li class="{{ Request::is('admin/jabatan*') ? 'active' : '' }}">
-                    <a class="nav-link" href="{{ url('admin/jabatan') }}">Jabatan</a>
-                </li>
-                <li class="{{ Request::is('admin/kategori*') ? 'active' : '' }}">
-                    <a class="nav-link" href="{{ url('admin/kategori') }}">Kategori</a>
-                </li>               
-            </ul>
-        </li>
+            @endif
+            @if(Auth::check() && Auth::user()->hasPermission('data_master'))
+            <li class="dropdown {{ Request::is('admin/users*') || Request::is('admin/roles*') || Request::is('admin/skpd*') || Request::is('admin/bidang*') || Request::is('admin/jabatan*') || Request::is('admin/kategori*') ? 'active' : '' }}">
+                <a href="#" class="nav-link has-dropdown"><i class="fas fa-database"></i> <span>Data Master</span></a>
+                <ul class="dropdown-menu">
+                    <li class="{{ Request::is('admin/users*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ url('/admin/users') }}">User</a>
+                    </li>
+                    <li class="{{ Request::is('admin/roles*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ url('admin/roles') }}">Role</a>
+                    </li>
+                    <li class="{{ Request::is('admin/skpd*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ url('admin/skpd') }}">SKPD</a>
+                    </li>
+                    <li class="{{ Request::is('admin/bidang*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ url('admin/bidang') }}">Bidang</a>
+                    </li>
+                    <li class="{{ Request::is('admin/jabatan*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ url('admin/jabatan') }}">Jabatan</a>
+                    </li>
+                    <li class="{{ Request::is('admin/kategori*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ url('admin/kategori') }}">Kategori</a>
+                    </li>               
+                </ul>
+            </li>
+            @endif
+
+
+            <!-- Kelola Penanggungjawab -->
+            @if(Auth::check() && Auth::user()->hasPermission('kelola_penanggungjawab'))
             <li class="{{ Request::is('admin/penanggungjawab*') ? 'active' : '' }}">
                 <a class="nav-link" href="{{ url('admin/penanggungjawab') }}"><i class="fas fa-user-plus"></i><span>Penanggungjawab</span></a>
             </li>
+            @endif
 
             <!-- Kelola Ticket -->
+            @if(Auth::check() && Auth::user()->hasPermission('kelola_menu_tiket'))
             <li class="menu-header">Ticket</li>
             <li class="{{ Request::is('admin/baru*') ? 'active' : '' }}">
                 <a class="nav-link" href="{{ url('admin/baru') }}">
@@ -69,14 +79,18 @@
                     <span class="ticket-circle badge-selesai">{{ $ticketCounts['selesai'] ?? 0 }}</span>
                 </a>
             </li>
-
+            @endif
             <!-- History -->
+
+            @if(Auth::check() && Auth::user()->hasPermission('riwayat_tiket'))
             <li class="menu-header">History</li>
             <li class="{{ Request::is('admin/history*') ? 'active' : '' }}">
                 <a class="nav-link" href="{{ url('admin/history') }}"><i class="fas fa-history"></i><span>Riwayat Tiket</span></a>
             </li>
-            
+            @endif
+
             <!-- Laporan -->
+            @if(Auth::check() && Auth::user()->hasPermission('laporan'))
             <li class="menu-header">Laporan</li>
             <li class="dropdown {{ Request::is('admin/harian*') || Request::is('admin/bulanan*') || Request::is('admin/berjangka*') ? 'active' : '' }}">
                 <a href="#" class="nav-link has-dropdown"><i class="fas fas fa-file"></i> <span>Laporan</span></a>
@@ -92,6 +106,7 @@
                     </li>          
                 </ul>
             </li>
+            @endif
         </ul>
     </aside>
 </div>

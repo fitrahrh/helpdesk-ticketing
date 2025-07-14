@@ -20,6 +20,9 @@ class TicketController extends Controller
      */
     public function indexBaru()
     {
+        if (!Auth::user()->hasPermission('kelola_menu_tiket')) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+        }
         return view('layouts.admin.ticket.baru.index');
     }
 
@@ -28,6 +31,9 @@ class TicketController extends Controller
      */
     public function dataTicketBaru()
     {
+        if (!Auth::user()->hasPermission('kelola_menu_tiket')) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+        }
         $tickets = Ticket::with(['user', 'kategori.skpd'])
                     ->where('status', 'Baru')
                     ->get();
@@ -55,6 +61,9 @@ class TicketController extends Controller
      */
     public function indexDiproses()
     {
+        if (!Auth::user()->hasPermission('kelola_menu_tiket')) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+        }
         return view('layouts.admin.ticket.diproses.index');
     }
 
@@ -63,6 +72,9 @@ class TicketController extends Controller
      */
     public function dataTicketDiproses()
     {
+        if (!Auth::user()->hasPermission('kelola_menu_tiket')) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+        }
         $tickets = Ticket::with(['user', 'kategori.skpd', 'approvedBy'])
                     ->where('status', 'Diproses')
                     ->get();
@@ -96,6 +108,9 @@ class TicketController extends Controller
      */
     public function indexDisposisi()
     {
+        if (!Auth::user()->hasPermission('kelola_menu_tiket')) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+        }
         $skpds = Skpd::with('kategoris')->get(); // Fetch SKPDs with their categories
         return view('layouts.admin.ticket.disposisi.index', compact('skpds'));
     }
@@ -105,6 +120,9 @@ class TicketController extends Controller
      */
     public function dataTicketDisposisi()
     {
+        if (!Auth::user()->hasPermission('kelola_menu_tiket')) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+        }
         $tickets = Ticket::with(['user', 'kategori.skpd'])
                     ->where('status', 'Disposisi')
                     ->get();
@@ -166,7 +184,7 @@ class TicketController extends Controller
         History::create([
             'ticket_id' => $ticket->id,
             'user_id' => Auth::id(),
-            'status' => 'kategori changed', // Spasi daripada underscore
+            'status' => 'kategori_diganti',
             'old_values' => $oldValues,
             'new_values' => [
                 'kategori' => $newKategori, // Nama kategori bukan ID
@@ -186,6 +204,9 @@ class TicketController extends Controller
      */
     public function indexSelesai()
     {
+        if (!Auth::user()->hasPermission('kelola_menu_tiket')) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+        }
         return view('layouts.admin.ticket.selesai.index');
     }
 
@@ -194,6 +215,9 @@ class TicketController extends Controller
      */
     public function dataTicketSelesai()
     {
+        if (!Auth::user()->hasPermission('kelola_menu_tiket')) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+        }
         $tickets = Ticket::with(['user', 'kategori.skpd', 'closedBy'])
                     ->where('status', 'Selesai')
                     ->get();

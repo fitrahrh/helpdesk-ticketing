@@ -9,11 +9,16 @@ use App\Models\Kategori;
 use App\Models\Skpd;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Auth;
 
 class PenanggungjawabController extends Controller
 {
     public function index()
     {
+        if (!Auth::user()->hasPermission('kelola_penanggungjawab')) {
+            // Jika user tidak memiliki hak akses 'akses_pelapor', kembalikan ke halaman sebelumnya
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+        }
         $penanggungjawabs = Penanggungjawab::with(['user', 'kategori'])->get();
         $users = User::where('role_id', 3)->get(); // Role_id 3 untuk teknisi
         $skpds = SKPD::with('kategoris')->get(); // Dapatkan SKPD dengan relasi kategoris

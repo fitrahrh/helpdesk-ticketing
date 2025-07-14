@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Database\Seeders;
 
 use App\Models\Role;
@@ -17,24 +16,38 @@ class RoleSeeder extends Seeder
         $roles = [
             [
                 'name' => 'Superadmin',
-                'hak_akses' => ['all'], // Pass the array directly, let Laravel handle the encoding
+                'hak_akses' => ['all', 'data_master'], // Pass the array directly, let Laravel handle the encoding
             ],
             [
                 'name' => 'Admin',
-                'hak_akses' => ['tiket', 'disposisi tiket', 'dashboard', 'kelola penanggungjawab', 'laporan'],
+                'hak_akses' => [
+                    'dashboard',              // Akses ke halaman Dashboard
+                    'kelola_penanggungjawab', // Akses ke halaman Kelola Penanggung Jawab
+                    'kelola_menu_tiket',      // Akses ke halaman Kelola Menu Tiket
+                    'disposisi_tiket',        // Akses ke halaman Disposisi Tiket
+                    'riwayat_tiket',          // Akses ke halaman Riwayat Tiket
+                    'laporan',                // Akses ke halaman Laporan
+                ],
             ],
             [
                 'name' => 'Teknisi',
-                'hak_akses' => ['persetujuan tiket'],
+                'hak_akses' => ['akses_teknisi'],
             ],
             [
                 'name' => 'User',
-                'hak_akses' => ['pengajuan tiket'],
+                'hak_akses' => ['akses_user'],
             ],
         ];
 
+        // Hapus data lama sebelum membuat yang baru jika seeder dijalankan ulang
+        // Role::truncate(); // Hati-hati menggunakan ini di produksi
+
         foreach ($roles as $role) {
-            Role::create($role);
+            // Gunakan updateOrCreate agar tidak membuat duplikat jika role sudah ada
+            Role::updateOrCreate(
+                ['name' => $role['name']],
+                ['hak_akses' => $role['hak_akses']]
+            );
         }
     }
 }
