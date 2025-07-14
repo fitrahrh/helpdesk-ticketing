@@ -1,4 +1,4 @@
-<div class="mb-4">        
+<div class="h-100 mb-4">
         <div class="list-group list-group-flush">
             <a href="{{ route('teknisi.baru') }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center {{ request()->routeIs('teknisi.baru') || (isset($ticket) && request()->routeIs('teknisi.ticket.show') && $ticket->status == 'Baru') ? 'active bg-light' : '' }}">
                 <div>

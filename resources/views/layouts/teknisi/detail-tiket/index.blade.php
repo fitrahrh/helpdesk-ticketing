@@ -1,21 +1,61 @@
 @extends('layouts.user-layout')
 
 @section('content')
-<br><br><br><br>
-<div class="container mt-n3 position-relative">
+<div class="pt-5"></div>
+<div class="container position-relative">
     <div class="row justify-content-center">
-        <!-- Sidebar Navigation -->
         <div class="col-md-3">
-            @include('layouts.teknisi.partials.status-nav')
-        </div>
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <h5>Teknisi Ticket Status</h5>
+                </div>
+            </div>
+                <hr>
+                <div class="h-100 mb-4">
+                    <div class="list-group list-group-flush">
+                        <!-- Pending Status -->
+                        <a href="{{ route('teknisi.baru') }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center {{ request()->routeIs('teknisi.baru') || (isset($ticket) && request()->routeIs('teknisi.ticket.show') && $ticket->status == 'Baru') ? 'active bg-light' : '' }}">
+                            <div>
+                                <i class="fas fa-envelope me-2 text-dark"></i> 
+                                <span class="{{ request()->routeIs('teknisi.baru') || (isset($ticket) && request()->routeIs('teknisi.ticket.show') && $ticket->status == 'Baru') ? 'fw-bold' : '' }}">Tiket Baru</span>
+                            </div>
+                            <span class="badge {{ request()->routeIs('teknisi.baru') || (isset($ticket) && request()->routeIs('teknisi.ticket.show') && $ticket->status == 'Baru') ? 'bg-light text-dark' : 'bg-light' }} rounded-pill ticket-circle">
+                                <!-- Mengambil jumlah tiket baru yang ditugaskan ke kategori yang ditangani teknisi ini -->
+                                {{ \App\Models\Ticket::whereIn('kategori_id', Auth::user()->penanggungjawabs()->pluck('kategori_id'))->where('status', 'Baru')->count() }}
+                            </span>
+                        </a>
+                        
+                        <a href="{{ route('teknisi.diproses') }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center {{ request()->routeIs('teknisi.diproses') || (isset($ticket) && request()->routeIs('teknisi.ticket.show') && $ticket->status == 'Diproses') ? 'active bg-light' : '' }}">
+                            <div>
+                                <i class="fas fa-spinner me-2 text-dark"></i> 
+                                <span class="{{ request()->routeIs('teknisi.diproses') || (isset($ticket) && request()->routeIs('teknisi.ticket.show') && $ticket->status == 'Diproses') ? 'fw-bold' : '' }}">Diproses</span>
+                            </div>
+                            <span class="badge {{ request()->routeIs('teknisi.diproses') || (isset($ticket) && request()->routeIs('teknisi.ticket.show') && $ticket->status == 'Diproses') ? 'bg-light' : 'bg-light' }} rounded-pill ticket-circle">
+                                {{ \App\Models\Ticket::whereIn('kategori_id', Auth::user()->penanggungjawabs()->pluck('kategori_id'))->where('status', 'Diproses')->count() }}
+                            </span>
+                        </a>
+                        
+                        <a href="{{ route('teknisi.selesai') }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center {{ request()->routeIs('teknisi.selesai') || (isset($ticket) && request()->routeIs('teknisi.ticket.show') && $ticket->status == 'Selesai') ? 'active bg-light' : '' }}">
+                            <div>
+                                <i class="fas fa-check me-2 text-dark"></i> 
+                                <span class="{{ request()->routeIs('teknisi.selesai') || (isset($ticket) && request()->routeIs('teknisi.ticket.show') && $ticket->status == 'Selesai') ? 'fw-bold' : '' }}">Selesai</span>
+                            </div>
+                            <span class="badge {{ request()->routeIs('teknisi.selesai') || (isset($ticket) && request()->routeIs('teknisi.ticket.show') && $ticket->status == 'Selesai') ? 'bg-light' : 'bg-light' }} rounded-pill ticket-circle">
+                                {{ \App\Models\Ticket::whereIn('kategori_id', Auth::user()->penanggungjawabs()->pluck('kategori_id'))->where('status', 'Selesai')->count() }}
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            </div>
         
         <!-- Main Content -->
         <div class="col-md-9">
-            <div class="card border-0 rounded-lg fade-in">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+            <div class="d-flex align-items-center justify-content-between mb-3"> <!-- Added mb-3 for spacing -->
+                <div class="d-flex align-items-center">
                     <span class="fs-5">
                         <h5><i class="fa fa-folder-open"></i> Detail Tiket #{{ $ticket->no_tiket }}</h5>
                     </span>
+                </div>
                     <div>
                         @php
                             $statusIcon = 'clock-o';
@@ -67,6 +107,7 @@
                     </div>
                 </div>
                 
+                <hr>
                 <div class="card-body">
                     <div class="d-flex mb-3">
                         <div class="me-4" style="margin-right: 15px !important;">
@@ -303,7 +344,6 @@
             </div>
         </div>
     </div>
-</div>
 
 <!-- Modal Approve Ticket -->
 <div class="modal fade" id="approveModal" tabindex="-1" role="dialog" aria-labelledby="approveModalLabel" aria-hidden="true">

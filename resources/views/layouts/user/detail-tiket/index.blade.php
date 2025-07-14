@@ -1,21 +1,17 @@
 @extends('layouts.user-layout')
 
 @section('content')
-<br><br><br><br>
-<div class="container mt-n3 position-relative">
+<div class="pt-5"></div>
+<div class="container position-relative">
     <div class="row justify-content-center">
-        <!-- Sidebar Navigation -->
         <div class="col-md-3">
-            <div class="shadow-sm mb-4">
-                <div class="card-body">
-            <!-- My Tiket Status Card -->
-                    <div class="d-flex align-items-center justify-content-between p-3">
-                        <div class="d-flex align-items-center">
-                            <h5 class="mb-0"><i class="fa fa-ticket text-dark me-2"></i> My Ticket Status</h5>
-                        </div>
-                    </div>
-                    <htr>
-                    
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <h5>My Ticket Status</h5>
+                </div>
+            </div>
+                <hr>
+                <div class="h-100 mb-4">      
                     <div class="list-group list-group-flush">
                         <!-- Pending Status -->
                         <a href="{{ route('ticket.pending') }}" 
@@ -69,8 +65,8 @@
                             </span>
                         </a>
                     </div>
+                </div>
             </div>
-        </div>
             <!-- Ticket Status Card -->
                     @php
                         $statusIcon = 'clock-o';
@@ -91,15 +87,16 @@
                             $statusText = 'Selesai';
                         }
                     @endphp
-            
-        </div>
+
         
         <!-- Main Content -->
         <div class="col-md-9">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
                     <span class="fs-5">
                         <h5><i class="fa fa-folder-open"></i> Detail Tiket #{{ $ticket->no_tiket }}</h5>
                     </span>
+                </div>
                     <div>
                         <button type="button" class="btn btn-{{ $statusColor }} btn-sm" disabled>
                             <i class="fa fa-circle-info me-1"></i> Status: {{ $ticket->status }}
@@ -127,6 +124,7 @@
                     </div>
                 </div>
                 
+                <hr>
                 <div class="card-body">
                     <div class="d-flex mb-3">
                         <div class="me-4" style="margin-right: 15px !important;">
@@ -342,8 +340,7 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
+     </div>
 
 <!-- Feedback Modal -->
 <div class="modal fade" id="feedbackModal" tabindex="-1" role="dialog" aria-labelledby="feedbackModalLabel" aria-hidden="true">
@@ -604,7 +601,7 @@ $(document).ready(function() {
             
             if (commentIds.length > 0) {
                 console.log('Marking comments as read:', commentIds);
-                
+
                 $.ajax({
                     url: '/ticket/comment/mark-as-read', // KONSISTEN untuk SEMUA VIEW
                     type: 'POST',
