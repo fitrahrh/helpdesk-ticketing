@@ -67,6 +67,7 @@ class CommentController extends Controller
         
         // Update ticket's last_comment_at
         $ticket->last_comment_at = now();
+        $ticket->last_comment_by = Auth::id();
         $ticket->save();
         
         // Kirim notifikasi kepada user pelapor jika memiliki telegram_id

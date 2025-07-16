@@ -1,4 +1,3 @@
-
 @extends('layouts.app')
 
 @section('content')
@@ -19,6 +18,34 @@
                             <h4>Daftar Riwayat Tiket</h4>
                         </div>
                         <div class="card-body">
+                            <form id="filterForm" class="mb-3">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" name="no_tiket" placeholder="Cari No Tiket">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" name="pengguna" placeholder="Cari Pengguna">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-control" name="status">
+                                            <option value="">Semua Status</option>
+                                            <option value="status_changed">Status Diubah</option>
+                                            <option value="kategori_changed">Kategori Diubah</option>
+                                            <option value="urgensi_changed">Urgensi Diubah</option>
+                                            <option value="comment">Komentar</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="date" class="form-control" name="tanggal">
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-md-12 text-end">
+                                        <button type="button" id="btn-filter" class="btn btn-primary btn-sm">Filter</button>
+                                        <button type="button" id="btn-reset" class="btn btn-secondary btn-sm">Reset</button>
+                                    </div>
+                                </div>
+                            </form>
                             <div class="table-responsive">
                                 <table class="table table-striped" id="history-table">
                                     <thead>
@@ -181,6 +208,18 @@
                     previous: "Sebelumnya"
                 }
             }
+        });
+
+        // Filter button click
+        $('#btn-filter').on('click', function() {
+            const formData = $('#filterForm').serialize();
+            table.ajax.url("{{ route('admin.history.data') }}?" + formData).load();
+        });
+
+        // Reset button click
+        $('#btn-reset').on('click', function() {
+            $('#filterForm')[0].reset();
+            table.ajax.url("{{ route('admin.history.data') }}").load();
         });
     });
 </script>

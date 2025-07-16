@@ -14,16 +14,36 @@
                 <a class="nav-link" href="{{ url('home') }}"><i class="fas fa-fire"></i><span>Dashboard</span></a>
             </li>
             @endif
+
+            <li class="dropdown {{ Request::is('admin/users*') || Request::is('admin/roles*') || Request::is('admin/penanggungjawab*') ? 'active' : '' }}">
+                <a href="#" class="nav-link has-dropdown"><i class="fas fa-user"></i> <span>Pengguna & Akses</span></a>
+                <ul class="dropdown-menu">
+                    <!-- User -->
+                    @if(Auth::check() && Auth::user()->hasPermission('kelola_user'))
+                    <li class="{{ Request::is('admin/users*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ url('/admin/users') }}">Kelola User</a>
+                    </li>
+                    @endif  
+
+                    <!-- Roles & Hak Akses -->
+                    @if(Auth::check() && Auth::user()->hasPermission('roles_dan_hak_akses'))
+                    <li class="{{ Request::is('admin/roles*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ url('admin/roles') }}">Role dan Hak Akses</a>
+                    </li>
+                    @endif  
+                    <!-- Kelola Penanggungjawab -->
+                    @if(Auth::check() && Auth::user()->hasPermission('kelola_penanggungjawab'))
+                    <li class="{{ Request::is('admin/penanggungjawab*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ url('admin/penanggungjawab') }}">Penanggung Jawab</a>
+                    </li>
+                    @endif  
+                </ul>
+            </li>
+
             @if(Auth::check() && Auth::user()->hasPermission('data_master'))
-            <li class="dropdown {{ Request::is('admin/users*') || Request::is('admin/roles*') || Request::is('admin/skpd*') || Request::is('admin/bidang*') || Request::is('admin/jabatan*') || Request::is('admin/kategori*') ? 'active' : '' }}">
+            <li class="dropdown {{ Request::is('admin/skpd*') || Request::is('admin/bidang*') || Request::is('admin/jabatan*') || Request::is('admin/kategori*') ? 'active' : '' }}">
                 <a href="#" class="nav-link has-dropdown"><i class="fas fa-database"></i> <span>Data Master</span></a>
                 <ul class="dropdown-menu">
-                    <li class="{{ Request::is('admin/users*') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ url('/admin/users') }}">User</a>
-                    </li>
-                    <li class="{{ Request::is('admin/roles*') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ url('admin/roles') }}">Role</a>
-                    </li>
                     <li class="{{ Request::is('admin/skpd*') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ url('admin/skpd') }}">SKPD</a>
                     </li>
@@ -37,14 +57,6 @@
                         <a class="nav-link" href="{{ url('admin/kategori') }}">Kategori</a>
                     </li>               
                 </ul>
-            </li>
-            @endif
-
-
-            <!-- Kelola Penanggungjawab -->
-            @if(Auth::check() && Auth::user()->hasPermission('kelola_penanggungjawab'))
-            <li class="{{ Request::is('admin/penanggungjawab*') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ url('admin/penanggungjawab') }}"><i class="fas fa-user-plus"></i><span>Penanggungjawab</span></a>
             </li>
             @endif
 
@@ -91,7 +103,7 @@
 
             <!-- Laporan -->
             @if(Auth::check() && Auth::user()->hasPermission('laporan'))
-            <li class="menu-header">Laporan</li>
+            <li class="menu-header">Report</li>
             <li class="dropdown {{ Request::is('admin/harian*') || Request::is('admin/bulanan*') || Request::is('admin/berjangka*') ? 'active' : '' }}">
                 <a href="#" class="nav-link has-dropdown"><i class="fas fas fa-file"></i> <span>Laporan</span></a>
                 <ul class="dropdown-menu">
