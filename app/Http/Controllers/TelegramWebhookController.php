@@ -33,12 +33,12 @@ public function handle(Request $request)
 
             if ($text === '/start' || $text === '/getid') {
                 $response = "👋 Selamat datang di Bot Helpdesk, $firstName!\n\n" .
-                            "🆔 *Chat ID Anda adalah:* `$chatId`\n\n" .
-                            "✅ Silakan salin ID ini dan masukkan ke profil Anda di aplikasi Helpdesk untuk menerima notifikasi tiket.\n\n" .
+                            "🆔 *Telegram ID Anda adalah:* `$chatId`\n\n" .
+                            "✅ Silakan salin ID ini dan masukkan ke profil Anda di Sistem Helpdesk untuk menerima notifikasi tiket.\n\n" .
                             "📝 *Langkah-langkah:*\n" .
                             "1. Kembali ke website Helpdesk\n" .
                             "2. Buka menu Profil\n" .
-                            "3. Tempel Chat ID pada kolom 'Telegram Chat ID'\n" .
+                            "3. Tempel Telegram ID pada kolom 'Telegram ID'\n" .
                             "4. Klik 'Update'\n\n" .
                             "💡 Ketik */help* untuk bantuan atau */test* untuk menguji notifikasi.";
 

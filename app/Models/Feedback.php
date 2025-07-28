@@ -17,7 +17,6 @@ class Feedback extends Model
      */
     protected $fillable = [
         'ticket_id',
-        'user_id',
         'rating',
         'komentar'
     ];

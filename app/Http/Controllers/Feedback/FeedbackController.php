@@ -55,7 +55,6 @@ class FeedbackController extends Controller
         // Create new feedback
         Feedback::create([
             'ticket_id' => $request->ticket_id,
-            'user_id' => Auth::id(),
             'rating' => $request->rating,
             'comment' => $request->comment
         ]);

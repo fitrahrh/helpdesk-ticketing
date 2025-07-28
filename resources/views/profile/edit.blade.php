@@ -151,14 +151,6 @@
 </div>
 @push('scripts')
 <script>
-    @if(session('status'))
-        toastr.success("{{ session('status') }}");
-    @endif
-
-    @if($errors->any())
-        toastr.error("{{ $errors->first() }}");
-    @endif
-
     $('#btnTestTelegram').click(function() {
         let telegramId = $('#telegram_id').val();
         if (!telegramId) {

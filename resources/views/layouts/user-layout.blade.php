@@ -271,7 +271,7 @@
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="mobileUserDropdown" role="button" data-toggle="dropdown">
-                    <i class="fa fa-user-circle-o me-2"></i> {{ Auth::user()->first_name }} {{ Auth::user()->last_name ?? '' }}
+                    {{ Auth::user()->first_name }} {{ Auth::user()->last_name ?? '' }}
                 </a>
                 <div class="dropdown-menu">
                     <a class="dropdown-item" href="{{ route('profile.edit') }}">Profil</a>

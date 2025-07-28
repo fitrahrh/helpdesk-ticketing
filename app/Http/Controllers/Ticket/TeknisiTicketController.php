@@ -43,7 +43,7 @@ class TeknisiTicketController extends Controller
         $tickets = Ticket::with(['user', 'kategori'])
                     ->whereIn('kategori_id', $kategoriIds)
                     ->where('status', 'Baru')
-                    ->orderBy('created_at', 'desc')
+                    ->orderBy('created_at', 'asc')
                     ->get();
                     
         return DataTables::of($tickets)
